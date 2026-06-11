@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>孩子信息</title>
+  <style>
+    :root {
+      --bg-page: #f7f2ef;
+      --header-gradient: linear-gradient(180deg, #fd898a 0%, #fd9999 100%);
+      --text-secondary: #464646;
+      --text-input: #5c5c5c;
+      --btn-dark: #464646;
+      --divider: #d3d3d3;
+      --phone-w: 440px;
+      --phone-h: 894px;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #e8e4e2;
+      font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+      padding: 24px 12px;
+    }
+
+    .phone {
+      width: var(--phone-w);
+      height: var(--phone-h);
+      max-width: 100%;
+      max-height: calc(100vh - 48px);
+      background: var(--bg-page);
+      border-radius: 48px;
+      overflow: hidden;
+      position: relative;
+      box-shadow: 0 24px 80px rgba(0, 0, 0, 0.18);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .header {
+      position: relative;
+      height: 78px;
+      background: var(--header-gradient);
+      flex-shrink: 0;
+    }
+    .header-nav {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 78px;
+      padding: 0 24px;
+    }
+
+    .back-btn {
+      position: absolute;
+      left: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.75);
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      padding: 0;
+    }
+
+    .back-btn img {
+      width: 24px;
+      height: 24px;
+      object-fit: contain;
+      display: block;
+    }
+
+    .back-btn:active { opacity: 0.85; }
+
+    .page-title {
+      font-size: 20px;
+      color: #000;
+      font-weight: 400;
+      text-align: center;
+    }
+
+    .content {
+      flex: 1;
+      overflow-y: auto;
+      padding-bottom: 40px;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+
+    .content::-webkit-scrollbar { display: none; }
+
+    .avatar-section {
+      display: flex;
+      justify-content: center;
+      padding: 16px;
+      margin-top: 0;
+    }
+
+    .avatar-wrap {
+      position: relative;
+      width: 80px;
+      height: 80px;
+    }
+
+    .avatar-wrap .avatar {
+      width: 80px;
+      height: 80px;
+      border-radius: 42px;
+      object-fit: cover;
+      display: block;
+    }
+
+    .avatar-edit {
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      width: 24px;
+      height: 24px;
+      border: none;
+      padding: 0;
+      background: none;
+      cursor: pointer;
+    }
+
+    .avatar-edit img {
+      width: 24px;
+      height: 24px;
+      display: block;
+    }
+
+    .form {
+      padding: 0 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .field label {
+      font-size: 16px;
+      color: #000;
+      line-height: 1;
+    }
+
+    .field input {
+      width: 100%;
+      height: 45px;
+      padding: 0 18px;
+      border: none;
+      border-radius: 13px;
+      background: #fff;
+      font-family: inherit;
+      font-size: 16px;
+      color: var(--text-input);
+      outline: none;
+    }
+
+    .field input::placeholder {
+      color: var(--text-input);
+    }
+
+    .gender-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 45px;
+      background: #fff;
+      border-radius: 13px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .gender-option {
+      flex: 1;
+      height: 100%;
+      border: none;
+      background: none;
+      font-family: inherit;
+      font-size: 16px;
+      color: var(--text-input);
+      cursor: pointer;
+    }
+
+    .gender-option.active {
+      color: #000;
+      font-weight: 600;
+    }
+
+    .gender-divider {
+      width: 1px;
+      height: 23px;
+      background: var(--divider);
+      flex-shrink: 0;
+    }
+
+    .chevron-wrap {
+      width: 17px;
+      height: 17px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-left: auto;
+    }
+
+    .chevron-wrap img {
+      width: 17px;
+      height: 17px;
+      display: block;
+      object-fit: contain;
+    }
+
+    .select-row {
+      display: flex;
+      align-items: center;
+      height: 45px;
+      padding: 0 16px 0 18px;
+      background: #fff;
+      border-radius: 13px;
+      border: none;
+      width: 100%;
+      font-family: inherit;
+      font-size: 16px;
+      color: var(--text-input);
+      cursor: pointer;
+      text-align: left;
+    }
+
+    .select-row .select-left {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      flex: 1;
+      min-width: 0;
+    }
+
+    .select-row .color-dot {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      object-fit: cover;
+      flex-shrink: 0;
+    }
+
+    .submit-wrap {
+      padding: 24px 44px 0;
+    }
+
+    .submit-btn {
+      width: 100%;
+      height: 44px;
+      border: none;
+      border-radius: 32px;
+      background: var(--btn-dark);
+      color: #fff;
+      font-family: inherit;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      line-height: 28px;
+    }
+
+    .submit-btn:active { opacity: 0.85; }
+
+    @media (max-width: 480px) {
+      body { padding: 0; }
+      .phone {
+        width: 100vw;
+        height: 100vh;
+        max-height: 100vh;
+        border-radius: 0;
+        box-shadow: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="phone">
+    <header class="header">
+      <div class="header-nav">
+        <button class="back-btn" type="button" id="backBtn" aria-label="返回">
+          <img src="images/fanhui.png" alt="" />
+        </button>
+        <h1 class="page-title">孩子信息</h1>
+      </div>
+    </header>
+
+    <div class="content">
+      <div class="avatar-section">
+        <div class="avatar-wrap">
+          <img class="avatar" id="avatarImg" src="images/unsplash_JfolIjRnveY.svg" alt="宝宝头像" />
+          <button class="avatar-edit" type="button" id="avatarEditBtn" aria-label="更换头像">
+            <img src="images/profile-avatar-edit.svg" alt="" />
+          </button>
+        </div>
+      </div>
+
+      <form class="form" id="childForm">
+        <div class="field">
+          <label for="name">姓名</label>
+          <input id="name" name="name" type="text" value="皮皮虾" autocomplete="name" />
+        </div>
+
+        <div class="field">
+          <label>性别</label>
+          <div class="gender-row" role="group" aria-label="性别">
+            <button class="gender-option" type="button" data-gender="男">男</button>
+            <div class="gender-divider" aria-hidden="true"></div>
+            <button class="gender-option active" type="button" data-gender="女">女</button>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="birthDate">出生日期</label>
+          <input id="birthDate" name="birthDate" type="text" placeholder="DD / MM / YYY" />
+        </div>
+
+        <div class="field">
+          <label for="relationship">与本人关系</label>
+          <button class="select-row" type="button" id="relationshipBtn">
+            <span id="relationshipValue">母女</span>
+            <span class="chevron-wrap" aria-hidden="true">
+              <img src="images/vector-down.svg" alt="" />
+            </span>
+          </button>
+        </div>
+
+        <div class="field">
+          <label for="color">选择颜色</label>
+          <button class="select-row" type="button" id="colorBtn">
+            <span class="select-left">
+              <span class="color-dot" id="colorDot" style="background:#d89698"></span>
+              <span id="colorValue">默认</span>
+            </span>
+            <span class="chevron-wrap" aria-hidden="true">
+              <img src="images/vector-down.svg" alt="" />
+            </span>
+          </button>
+        </div>
+      </form>
+
+      <div class="submit-wrap">
+        <button class="submit-btn" type="button" id="submitBtn">完成</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/system-time.js"></script>
+  <script>
+    const COLOR_OPTIONS = [
+      { label: "默认", color: "#d89698", dot: "" },
+      { label: "粉色", color: "#fd898a", dot: null },
+      { label: "蓝色", color: "#7eb8da", dot: null },
+      { label: "绿色", color: "#8bc9a0", dot: null }
+    ];
+    const RELATION_OPTIONS = ["母子", "母女", "父子", "父女", "其他"];
+
+    let selectedGender = "女";
+    let selectedRelationship = "母女";
+    let selectedColor = COLOR_OPTIONS[0];
+
+    const params = new URLSearchParams(window.location.search);
+    const editIndex = params.get("index");
+
+    function loadChildren() {
+      const stored = sessionStorage.getItem("childrenList");
+      if (stored) return JSON.parse(stored);
+      return [
+        { name: "宝宝1" },
+        { name: "宝宝2" }
+      ];
+    }
+
+    function saveChildren(list) {
+      sessionStorage.setItem("childrenList", JSON.stringify(list));
+    }
+
+    function fillForm(child) {
+      document.getElementById("name").value = child.name || "";
+      document.getElementById("birthDate").value = child.birthDate || "";
+      document.getElementById("avatarImg").src =
+        child.avatar || "images/unsplash_JfolIjRnveY.svg";
+      if (child.gender) setGender(child.gender);
+      if (child.relationship) {
+        selectedRelationship = child.relationship;
+        document.getElementById("relationshipValue").textContent = child.relationship;
+      }
+      if (child.color) {
+        const found = COLOR_OPTIONS.find((c) => c.label === child.color.label) || child.color;
+        selectedColor = found;
+        document.getElementById("colorValue").textContent = found.label;
+        if (found.dot) {
+          document.getElementById("colorDot").src = found.dot;
+        } else {
+          document.getElementById("colorDot").style.background = found.color;
+        }
+      }
+    }
+
+    function setGender(gender) {
+      selectedGender = gender;
+      document.querySelectorAll(".gender-option").forEach((btn) => {
+        btn.classList.toggle("active", btn.dataset.gender === gender);
+      });
+    }
+
+    document.querySelectorAll(".gender-option").forEach((btn) => {
+      btn.addEventListener("click", () => setGender(btn.dataset.gender));
+    });
+
+    document.getElementById("backBtn").addEventListener("click", () => {
+      window.location.href = "我的.html";
+    });
+
+    document.getElementById("avatarEditBtn").addEventListener("click", () => {
+      alert("更换头像");
+    });
+
+    document.getElementById("relationshipBtn").addEventListener("click", () => {
+      const idx = RELATION_OPTIONS.indexOf(selectedRelationship);
+      const next = RELATION_OPTIONS[(idx + 1) % RELATION_OPTIONS.length];
+      selectedRelationship = next;
+      document.getElementById("relationshipValue").textContent = next;
+    });
+
+    document.getElementById("colorBtn").addEventListener("click", () => {
+      const idx = COLOR_OPTIONS.indexOf(selectedColor);
+      const next = COLOR_OPTIONS[(idx + 1) % COLOR_OPTIONS.length];
+      selectedColor = next;
+      document.getElementById("colorValue").textContent = next.label;
+      const dot = document.getElementById("colorDot");
+      if (next.dot) {
+        dot.src = next.dot;
+        dot.style.background = "";
+      } else {
+        dot.removeAttribute("src");
+        dot.style.background = next.color;
+      }
+    });
+
+    document.getElementById("submitBtn").addEventListener("click", () => {
+      const child = {
+        name: document.getElementById("name").value.trim() || "未命名",
+        gender: selectedGender,
+        birthDate: document.getElementById("birthDate").value.trim(),
+        relationship: selectedRelationship,
+        color: { label: selectedColor.label, color: selectedColor.color },
+        avatar: document.getElementById("avatarImg").src
+      };
+
+      const list = loadChildren();
+      if (editIndex !== null && list[editIndex]) {
+        list[editIndex] = child;
+      } else {
+        list.push(child);
+      }
+      saveChildren(list);
+      window.location.href = "我的.html";
+    });
+
+    if (editIndex !== null) {
+      const list = loadChildren();
+      if (list[editIndex]) fillForm(list[editIndex]);
+    }
+  </script>
+  <script src="js/section-fade-in.js"></script>
+</body>
+</html>

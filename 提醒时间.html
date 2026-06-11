@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <link rel="stylesheet" href="css/reminder-time-modal.css" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>提醒时间</title>
+  <style>
+    :root {
+      --bg-page: #f7f2ef;
+      --phone-w: 440px;
+      --phone-h: 894px;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #e8e4e2;
+      font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+      padding: 24px 12px;
+    }
+
+    .phone {
+      width: var(--phone-w);
+      height: var(--phone-h);
+      max-width: 100%;
+      max-height: calc(100vh - 48px);
+      background: var(--bg-page);
+      border-radius: 48px;
+      overflow: hidden;
+      position: relative;
+      box-shadow: 0 24px 80px rgba(0, 0, 0, 0.18);
+    }
+
+    .page-backdrop {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, #fd898a 0%, #fd9999 185px, var(--bg-page) 185px);
+    }
+  </style>
+</head>
+<body>
+  <div class="phone">
+    <div class="page-backdrop" aria-hidden="true"></div>
+
+    <div class="reminder-time-flow is-open" id="reminderTimeFlow" aria-hidden="false">
+      <div class="reminder-time-overlay" id="reminderTimeContentOverlay"></div>
+      <div class="reminder-time-stack" role="dialog" aria-labelledby="reminderTimeTitle" aria-modal="true">
+        <div class="reminder-time-card">
+          <div class="reminder-time-header">
+            <h2 class="reminder-time-title" id="reminderTimeTitle">提醒时间</h2>
+            <div class="reminder-time-badge">
+              <span id="reminderTimePreviewTime">上午 10:00</span>
+            </div>
+          </div>
+
+          <div class="reminder-time-wheel-wrap">
+            <div class="reminder-time-picker">
+              <div class="reminder-time-column reminder-time-column--period">
+                <div class="reminder-time-column__frame" aria-hidden="true"></div>
+                <div class="reminder-time-wheel-col" id="reminderTimePeriodCol"></div>
+              </div>
+              <div class="reminder-time-column reminder-time-column--hour">
+                <div class="reminder-time-column__frame" aria-hidden="true"></div>
+                <div class="reminder-time-wheel-col" id="reminderTimeHourCol"></div>
+                <span class="reminder-time-column__unit">时</span>
+              </div>
+              <div class="reminder-time-column reminder-time-column--minute">
+                <div class="reminder-time-column__frame" aria-hidden="true"></div>
+                <div class="reminder-time-wheel-col" id="reminderTimeMinuteCol"></div>
+                <span class="reminder-time-column__unit">分</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="reminder-time-actions">
+            <button class="reminder-time-btn-cancel" type="button" id="reminderTimeBtnCancel">取消</button>
+            <button class="reminder-time-btn-confirm" type="button" id="reminderTimeBtnConfirm">确定</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/system-time.js"></script>
+  <script src="js/modal-motion.js"></script>
+  <script src="js/reminder-time-modal.js"></script>
+  <script>
+    ReminderTimeModal.mount({
+      rootEl: document.getElementById("reminderTimeFlow"),
+      onClose: function () {
+        window.location.href = "我的.html";
+      },
+      onConfirm: function (time) {
+        sessionStorage.setItem("reminderTime", JSON.stringify(time));
+        window.location.href = "我的.html";
+      }
+    });
+
+    ReminderTimeModal.open();
+  </script>
+  <script src="js/section-fade-in.js"></script>
+</body>
+</html>

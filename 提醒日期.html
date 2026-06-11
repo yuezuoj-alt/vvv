@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <link rel="stylesheet" href="css/reminder-date-modal.css" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>提醒日期</title>
+  <style>
+    :root {
+      --bg-page: #f7f2ef;
+      --phone-w: 440px;
+      --phone-h: 894px;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #e8e4e2;
+      font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+      padding: 24px 12px;
+    }
+
+    .phone {
+      width: var(--phone-w);
+      height: var(--phone-h);
+      max-width: 100%;
+      max-height: calc(100vh - 48px);
+      background: var(--bg-page);
+      border-radius: 48px;
+      overflow: hidden;
+      position: relative;
+      box-shadow: 0 24px 80px rgba(0, 0, 0, 0.18);
+    }
+
+    .page-backdrop {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, #fd898a 0%, #fd9999 185px, var(--bg-page) 185px);
+    }
+  </style>
+</head>
+<body>
+  <div class="phone">
+    <div class="page-backdrop" aria-hidden="true"></div>
+
+    <div class="reminder-date-flow is-open" id="reminderDateFlow" aria-hidden="false">
+      <div class="reminder-date-overlay" id="reminderDateContentOverlay"></div>
+      <div class="reminder-date-stack" role="dialog" aria-labelledby="reminderDateTitle" aria-modal="true">
+        <div class="reminder-date-card">
+          <div class="reminder-date-header">
+            <h2 class="reminder-date-title" id="reminderDateTitle">提醒日期</h2>
+            <div class="reminder-date-badge">
+              <span id="reminderDatePreviewDays">提前10天</span>
+            </div>
+          </div>
+
+          <div class="reminder-date-wheel-wrap">
+            <div class="reminder-date-picker">
+              <div class="reminder-date-column">
+                <div class="reminder-date-column__frame" aria-hidden="true"></div>
+                <div class="reminder-date-wheel-col" id="reminderDateDayCol"></div>
+                <span class="reminder-date-column__unit">天</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="reminder-date-actions">
+            <button class="reminder-date-btn-cancel" type="button" id="reminderDateBtnCancel">取消</button>
+            <button class="reminder-date-btn-confirm" type="button" id="reminderDateBtnConfirm">添加</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/system-time.js"></script>
+  <script src="js/modal-motion.js"></script>
+  <script src="js/reminder-date-modal.js"></script>
+  <script>
+    ReminderDateModal.mount({
+      rootEl: document.getElementById("reminderDateFlow"),
+      onClose: function () {
+        window.location.href = "我的.html";
+      },
+      onConfirm: function (result) {
+        sessionStorage.setItem("customReminderDays", String(result.days));
+        sessionStorage.setItem("reminderMode", "custom");
+        window.location.href = "我的.html";
+      }
+    });
+
+    ReminderDateModal.open();
+  </script>
+  <script src="js/section-fade-in.js"></script>
+</body>
+</html>

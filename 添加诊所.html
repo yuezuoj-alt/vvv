@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>添加诊所</title>
+  <style>
+    :root {
+      --bg-page: #f7f2ef;
+      --header-gradient: linear-gradient(180deg, #fd898a 0%, #fd9999 100%);
+      --text-muted: #8d8d8d;
+      --btn-primary: #fd898a;
+      --phone-w: 440px;
+      --phone-h: 894px;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #e8e4e2;
+      font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+      padding: 24px 12px;
+    }
+
+    .phone {
+      width: var(--phone-w);
+      height: var(--phone-h);
+      max-width: 100%;
+      max-height: calc(100vh - 48px);
+      background: var(--bg-page);
+      border-radius: 48px;
+      overflow: hidden;
+      position: relative;
+      box-shadow: 0 24px 80px rgba(0, 0, 0, 0.18);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .header {
+      position: relative;
+      height: 78px;
+      background: var(--header-gradient);
+      flex-shrink: 0;
+    }
+
+    .header-nav {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 78px;
+      padding: 0 24px;
+    }
+
+    .back-btn {
+      position: absolute;
+      left: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.75);
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      padding: 0;
+    }
+
+    .back-btn img {
+      width: 24px;
+      height: 24px;
+      object-fit: contain;
+      display: block;
+    }
+
+    .back-btn:active { opacity: 0.85; }
+
+    .page-title {
+      font-size: 20px;
+      color: #000;
+      font-weight: 400;
+      text-align: center;
+    }
+
+    .content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-top: 121px;
+    }
+
+    .illustration {
+      width: 300px;
+      max-width: calc(100% - 48px);
+      flex-shrink: 0;
+    }
+
+    .illustration img {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+
+    .status-title {
+      margin-top: 94px;
+      font-size: 22px;
+      color: #000;
+      font-weight: 400;
+      text-align: center;
+    }
+
+    .status-desc {
+      margin-top: 24px;
+      font-size: 16px;
+      line-height: 20px;
+      color: var(--text-muted);
+      text-align: center;
+      letter-spacing: 0.35px;
+    }
+
+    .cta-btn {
+      margin-top: 28px;
+      width: 126px;
+      height: 44px;
+      border: none;
+      border-radius: 32px;
+      background: var(--btn-primary);
+      color: #fff;
+      font-family: inherit;
+      font-size: 16px;
+      font-weight: 500;
+      line-height: 28px;
+      cursor: pointer;
+    }
+
+    .cta-btn:active { opacity: 0.88; }
+
+    @media (max-width: 480px) {
+      body { padding: 0; }
+      .phone {
+        width: 100vw;
+        height: 100vh;
+        max-height: 100vh;
+        border-radius: 0;
+        box-shadow: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="phone">
+    <header class="header">
+      <div class="header-nav">
+        <button class="back-btn" type="button" id="backBtn" aria-label="返回">
+          <img src="images/fanhui.png" alt="" />
+        </button>
+        <h1 class="page-title">添加诊所</h1>
+      </div>
+    </header>
+
+    <main class="content">
+      <div class="illustration">
+        <img src="images/waiting.png" alt="功能开发中" />
+      </div>
+
+      <h2 class="status-title">此功能正在开发中</h2>
+      <p class="status-desc">
+        很快就能帮您找到<br />
+        附近的接种点啦
+      </p>
+      <button class="cta-btn" type="button" id="ctaBtn">敬请期待</button>
+    </main>
+  </div>
+
+  <script src="js/system-time.js"></script>
+  <script>
+    document.getElementById("backBtn").addEventListener("click", () => {
+      window.location.href = "我的.html";
+    });
+  </script>
+  <script src="js/section-fade-in.js"></script>
+</body>
+</html>

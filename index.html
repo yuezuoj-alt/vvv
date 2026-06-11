@@ -1,0 +1,3155 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <link rel="stylesheet" href="css/bottom-nav.css" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>首页</title>
+  <style>
+    :root {
+      --bg-page: #f9f4f2;
+      --bg-header: #f5b8b0;
+      --bg-header-gradient: linear-gradient(180deg, #fd898a 0%, #fd9999 100%);
+      --pink-primary: #d89698;
+      --pink-accent: #ec7b75;
+      --pink-muted: #e8c0b7;
+      --nav-bg: #fee0d8;
+      --card-white: #ffffff;
+      --card-muted: #fafafa;
+      --text-primary: #000000;
+      --text-secondary: #464646;
+      --text-muted: #707a87;
+      --text-status-gray: #8d8d8d;
+      --text-status-green: #617363;
+      --dose-done: #e8e8e8;
+      --dose-booked: #c8dcc8;
+      --btn-dark: #464646;
+      --shadow-card: 0 9px 13px rgba(226, 202, 194, 0.3);
+      --radius-card: 20px;
+      --radius-large: 34px;
+      --phone-w: 440px;
+      --phone-h: 894px;
+      --progress-line: #d9d9d9;
+      --date-disabled: #ceccd1;
+      --btn-cancel-bg: #c5c5c5;
+      --btn-next-bg: #fd898a;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #e8e4e2;
+      font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+      padding: 24px 12px;
+    }
+
+    .phone {
+      width: var(--phone-w);
+      height: var(--phone-h);
+      max-width: 100%;
+      max-height: calc(100vh - 48px);
+      background: var(--bg-page);
+      border-radius: 48px;
+      overflow: hidden;
+      position: relative;
+      box-shadow: 0 24px 80px rgba(0, 0, 0, 0.18);
+      display: flex;
+      flex-direction: column;
+    }
+
+
+    /* Header */
+    .header-wrap {
+      position: relative;
+      flex-shrink: 0;
+      z-index: 10;
+      min-height: 111px;
+    }
+
+    .header-wrap.has-appointment {
+      min-height: 146px;
+    }
+
+    .header-bg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 440px;
+      max-width: 100%;
+      height: 111px;
+      background: var(--bg-header-gradient);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .header-wrap.has-appointment .header-bg {
+      height: 146px;
+    }
+    .profile-row {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 20px;
+      min-height: 72px;
+      z-index: 2;
+    }
+
+    .calendar-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.75);
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    }
+
+    .calendar-btn img {
+      width: 24px;
+      height: 24px;
+      display: block;
+      flex-shrink: 0;
+    }
+
+    /* Next Appointment */
+    .next-card-wrap {
+      position: relative;
+      display: none;
+      padding: 0 20px;
+      margin-top: 20px;
+      z-index: 5;
+      flex-shrink: 0;
+    }
+
+    .header-wrap.has-appointment .next-card-wrap {
+      display: block;
+    }
+
+    .next-card {
+      position: relative;
+      width: 100%;
+      max-width: 400px;
+      margin: 0 auto;
+      padding: 56px 10px 12px;
+    }
+
+    .next-card .card-bg {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 165px;
+      border-radius: var(--radius-large);
+      background: linear-gradient(180deg, rgba(255, 240, 235, 0.15) 49.5%, rgba(233, 221, 217, 0.3) 100%);
+      backdrop-filter: blur(32.5px);
+      -webkit-backdrop-filter: blur(32.5px);
+      box-shadow: var(--shadow-card);
+      border: 0.8px solid rgba(255, 255, 255, 0.6);
+    }
+
+    .next-card .card-title {
+      position: absolute;
+      left: 32px;
+      top: 26px;
+      font-size: 16px;
+      color: #000;
+      letter-spacing: 0.35px;
+      line-height: 20px;
+      z-index: 2;
+    }
+
+    .next-card .card-inner {
+      position: relative;
+      z-index: 2;
+      width: 376px;
+      max-width: calc(100% - 4px);
+      margin: 0 auto;
+      height: 96px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 21px 18px;
+    }
+
+    .next-card .inner-bg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: fill;
+      border-radius: 22px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .next-info {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .next-info .accent-line {
+      width: 2px;
+      height: 52px;
+      background: var(--text-secondary);
+      border-radius: 5px;
+      flex-shrink: 0;
+    }
+
+    .next-info .date-row {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+    }
+
+    .next-info .date {
+      font-size: 22px;
+      font-weight: 800;
+      color: #000;
+      line-height: 1.2;
+    }
+
+    .next-info .weekday {
+      font-size: 14px;
+      color: #000;
+      letter-spacing: 0.35px;
+    }
+
+    .next-info .vaccine-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 4px;
+    }
+
+    .next-info .vaccine-name {
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 28px;
+    }
+
+    .tag-free {
+      font-size: 10px;
+      color: var(--text-secondary);
+      border: 0.5px solid var(--text-secondary);
+      border-radius: 3px;
+      padding: 0 4px;
+      height: 14px;
+      line-height: 14px;
+      letter-spacing: 0.35px;
+    }
+
+    .btn-edit {
+      position: relative;
+      z-index: 1;
+      width: 102px;
+      height: 42px;
+      background: var(--btn-dark);
+      border: none;
+      border-radius: 23px;
+      color: #fff;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      flex-shrink: 0;
+      font-family: inherit;
+    }
+
+    .btn-edit:active {
+      opacity: 0.85;
+    }
+
+    /* 列表区整体上移 149px，与头部重叠 */
+    .list-section {
+      flex: 1;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      margin-top: -149px;
+      position: relative;
+      z-index: 2;
+    }
+
+    /* Scrollable list — 隐藏卡片在粉色背景/预约卡下层 */
+    .list-area {
+      flex: 1;
+      overflow-y: scroll;
+      overflow-x: hidden;
+      padding: 0 0 120px;
+      -webkit-overflow-scrolling: touch;
+      touch-action: pan-y;
+      scrollbar-width: none;
+      overscroll-behavior-y: auto;
+      position: relative;
+      z-index: 2;
+      min-height: 0;
+    }
+
+    .header-wrap.has-appointment + .list-section .list-area {
+      padding-top: 0;
+    }
+
+    /* 有已完成疫苗可上滑展开时，去掉顶部遮罩（否则会挡住卡介苗） */
+    .list-section.has-completed-pull .list-reveal-panel {
+      display: none;
+    }
+
+    .list-area::-webkit-scrollbar {
+      display: none;
+    }
+
+    .momentum-scroll-inner {
+      will-change: transform;
+    }
+
+    /* 149×440 纯色遮罩：sticky 贴在列表顶部，与 active 区 padding 联动 */
+    .list-reveal-panel {
+      position: sticky;
+      top: 0;
+      z-index: 6;
+      width: 440px;
+      max-width: 100%;
+      height: 149px;
+      margin-bottom: -149px;
+      background: var(--bg-page);
+      pointer-events: none;
+      flex-shrink: 0;
+    }
+
+    .completed-stack-inner {
+      will-change: transform;
+    }
+
+    .completed-stack.is-visible {
+      z-index: 3;
+    }
+
+    .vaccine-list-shell {
+      position: relative;
+      z-index: 1;
+    }
+
+    .completed-stack {
+      overflow: hidden;
+      height: 0;
+      will-change: height, margin-top;
+      position: relative;
+      z-index: 0;
+    }
+
+    .completed-stack.is-revealing {
+      transition:
+        height 0.34s cubic-bezier(0.22, 1, 0.36, 1),
+        margin-top 0.34s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .completed-stack.is-revealing .completed-stack-inner {
+      transition: transform 0.34s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .active-stack.is-revealing {
+      transition: padding-top 0.34s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .completed-stack.is-snapping {
+      transition:
+        height 0.24s cubic-bezier(0.55, 0, 1, 0.45),
+        margin-top 0.24s cubic-bezier(0.55, 0, 1, 0.45);
+    }
+
+    .completed-stack.is-snapping .completed-stack-inner {
+      transition: transform 0.24s cubic-bezier(0.55, 0, 1, 0.45);
+    }
+
+    .active-stack {
+      position: relative;
+      z-index: 1;
+      padding-top: 149px;
+      transition: padding-top 0.34s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .active-stack.is-snapping {
+      transition: padding-top 0.24s cubic-bezier(0.55, 0, 1, 0.45);
+    }
+    .header-wrap.has-appointment + .list-section .active-stack {
+      padding-top: calc(149px + 16px);
+    }
+
+    .vaccine-item {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      padding: 7px 20px;
+      margin-bottom: 0;
+    }
+
+    .swipe-container {
+      flex: 1;
+      max-width: 362px;
+      min-height: 118px;
+      position: relative;
+      overflow: hidden;
+      border-radius: var(--radius-card);
+    }
+
+    .swipe-hide {
+      position: absolute;
+      right: 0;
+      top: 0;
+      width: 110px;
+      height: 118px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 0;
+      background: #fef9e6;
+      border-radius: 0 30px 30px 0;
+    }
+
+    .swipe-hide .hide-icon {
+      position: relative;
+      z-index: 1;
+      width: 36px;
+      height: 36px;
+      color: #f0ad4e;
+      flex-shrink: 0;
+    }
+
+    .swipe-hide .hide-icon svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .swipe-hide-btn {
+      position: absolute;
+      inset: 0;
+      border: none;
+      background: none;
+      cursor: pointer;
+      z-index: 2;
+    }
+
+    .swipe-panel {
+      position: relative;
+      z-index: 1;
+      transform: translateX(0);
+      transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+      will-change: transform;
+    }
+
+    .swipe-panel.dragging {
+      transition: none;
+    }
+
+    .swipe-panel.open {
+      transform: translateX(-110px);
+    }
+
+    .vaccine-item.is-hidden {
+      display: none;
+    }
+
+    .timeline-side {
+      width: 18px;
+      height: 94px;
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      align-self: flex-start;
+    }
+
+    .timeline-syringe {
+      width: 18px;
+      height: 22px;
+      object-fit: contain;
+      flex-shrink: 0;
+      display: block;
+    }
+
+    .timeline-bar {
+      width: 14px;
+      flex: 1;
+      min-height: 72px;
+      margin-top: 15px;
+      border-radius: 8px;
+      background: #e1e1e1;
+    }
+
+    .timeline-side.is-due .timeline-bar {
+      background: #ec7b75;
+    }
+
+    .vaccine-item.is-completed {
+      opacity: 0.92;
+    }
+
+    .vaccine-card {
+      flex: 1;
+      max-width: 362px;
+      min-height: 118px;
+      background: var(--card-white);
+      border-radius: var(--radius-card);
+      padding: 8px 14px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .vaccine-card.muted {
+      background: var(--card-muted);
+    }
+
+    .vaccine-card .connector {
+      position: absolute;
+      left: 14.5px;
+      top: 40px;
+      width: 14.5px;
+      height: 65px;
+      background: #fff;
+      border-radius: 8px;
+    }
+
+    .vaccine-card.muted .connector {
+      background: #fff;
+    }
+
+    .vaccine-card .card-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 24px;
+      margin-bottom: 7px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .vaccine-card .card-head h3 {
+      font-size: 18px;
+      font-weight: 400;
+      color: #000;
+    }
+
+    .vaccine-card .help-icon {
+      width: 16px;
+      height: 16px;
+      cursor: pointer;
+      opacity: 0.6;
+      border: none;
+      padding: 0;
+      background: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .vaccine-card .help-icon img {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .doses-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      padding-left: 2px;
+      position: relative;
+      z-index: 1;
+      overflow-x: auto;
+      flex-wrap: nowrap;
+      scrollbar-width: none;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .doses-row::-webkit-scrollbar {
+      display: none;
+    }
+
+    .dose-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 48px;
+      flex-shrink: 0;
+    }
+
+    .dose-circle {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .dose-circle.done {
+      background: var(--dose-done);
+    }
+
+    .dose-circle.booked {
+      background: var(--dose-booked);
+    }
+
+    .dose-circle.has-ball-img {
+      background: transparent;
+    }
+
+    .dose-circle.has-ball-img .bg-img {
+      object-fit: contain;
+    }
+
+    .dose-circle.future {
+      background: transparent;
+      border: none;
+    }
+
+    .dose-circle .bg-img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .dose-circle .icon-overlay {
+      position: absolute;
+      width: 23px;
+      height: 29px;
+      top: 9px;
+      left: 50%;
+      transform: translateX(-50%);
+      opacity: 0.35;
+    }
+
+    .dose-circle.booked .icon-overlay {
+      width: 28px;
+      height: 28px;
+      opacity: 0.4;
+    }
+
+    .dose-label {
+      position: absolute;
+      font-size: 14px;
+      font-weight: 700;
+      z-index: 2;
+    }
+
+    .dose-circle.done .dose-label {
+      color: var(--text-status-gray);
+    }
+
+    .dose-circle.booked .dose-label {
+      color: var(--text-status-green);
+    }
+
+    .dose-circle.future .dose-num {
+      font-size: 32px;
+      color: #e0e0e0;
+      font-weight: 400;
+      line-height: 1;
+    }
+
+    .dose-date {
+      margin-top: 4px;
+      font-size: 10px;
+      color: var(--text-muted);
+      white-space: nowrap;
+    }
+
+    .add-vaccine-section {
+      padding: 7px 20px 24px 54px;
+    }
+
+    .add-vaccine-card {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      max-width: 362px;
+      height: 113px;
+      background: var(--nav-bg);
+      border-radius: var(--radius-card);
+      border: none;
+      width: 100%;
+      cursor: pointer;
+      font-family: inherit;
+    }
+
+    .add-vaccine-card:active {
+      opacity: 0.85;
+    }
+
+    .add-vaccine-card img {
+      width: 45px;
+      height: 45px;
+      object-fit: contain;
+    }
+
+    button.dose-circle.future {
+      cursor: pointer;
+      border: none;
+      padding: 0;
+      font-family: inherit;
+    }
+
+    /* Bottom fade */
+    .list-fade {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 102px;
+      height: 64px;
+      background: linear-gradient(180deg, transparent 0%, var(--bg-page) 100%);
+      pointer-events: none;
+      z-index: 8;
+    }
+
+    /* Bottom Nav */
+    .bottom-nav {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 102px;
+      background: var(--nav-bg);
+      backdrop-filter: blur(11.45px);
+      -webkit-backdrop-filter: blur(11.45px);
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      padding: 16px 30px 34px;
+      z-index: 15;
+    }
+
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 50px;
+      cursor: pointer;
+      border: none;
+      background: none;
+      font-family: inherit;
+      padding: 0;
+    }
+
+    .nav-item .nav-label {
+      font-size: 10px;
+      color: var(--pink-muted);
+      line-height: normal;
+      text-align: center;
+    }
+
+    .nav-item.active .nav-label {
+      color: var(--pink-accent);
+    }
+
+    /* 接种预定时间弹窗（Figma 58-5328） */
+    .booking-flow {
+      position: absolute;
+      inset: 0;
+      z-index: 18;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      pointer-events: none;
+    }
+
+    .booking-flow.is-open {
+      pointer-events: auto;
+    }
+
+    .booking-flow[hidden] {
+      display: none !important;
+    }
+
+    .booking-content-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.3);
+    }
+
+    .booking-modal-stack {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 400px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      max-height: calc(100% - 40px);
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .booking-card {
+      background: rgba(255, 255, 255, 0.98);
+      backdrop-filter: blur(12.5px);
+      -webkit-backdrop-filter: blur(12.5px);
+      border-radius: 15px;
+      overflow: hidden;
+    }
+
+    .booking-card-progress {
+      padding: 19px 20px 16px;
+      text-align: center;
+    }
+
+    .booking-modal-title {
+      font-size: 16px;
+      color: #000;
+      margin-bottom: 14px;
+    }
+
+    .booking-progress-bar {
+      position: relative;
+      height: 7px;
+    }
+
+    .booking-progress-line {
+      position: absolute;
+      left: 10px;
+      right: 10px;
+      top: 2px;
+      height: 3px;
+      background: var(--progress-line);
+      border-radius: 2px;
+      z-index: 0;
+    }
+
+    .booking-progress-dots {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 0;
+      height: 7px;
+      pointer-events: none;
+    }
+
+    .booking-progress-dot {
+      position: absolute;
+      top: 0;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #d9d9d9;
+      transform: translateX(-50%);
+      z-index: 2;
+    }
+
+    .booking-progress-dot:nth-child(1) {
+      left: 6px;
+    }
+
+    .booking-progress-dot:nth-child(2) {
+      left: 176px;
+    }
+
+    .booking-progress-dot:nth-child(3) {
+      left: 345px;
+    }
+
+    .booking-progress-dot.active {
+      background: #fd898a;
+    }
+
+    .booking-progress-line-fill {
+      position: absolute;
+      left: 10px;
+      top: 2px;
+      height: 3px;
+      background: #f1a7a8;
+      border-radius: 2px;
+      z-index: 1;
+    }
+
+    .booking-progress-bar.is-step-2 .booking-progress-line-fill {
+      width: 170px;
+    }
+
+    .booking-progress-bar.is-step-3 .booking-progress-line-fill {
+      right: 10px;
+      width: auto;
+    }
+
+    .booking-card-confirm {
+      padding: 0 0 24px;
+    }
+
+    .booking-confirm-row {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 16px 20px;
+      border: none;
+      background: none;
+      width: 100%;
+      font-family: inherit;
+      text-align: left;
+      cursor: pointer;
+    }
+
+    .booking-confirm-row.profile-inner {
+      align-items: flex-start;
+      padding-top: 20px;
+      padding-bottom: 20px;
+      cursor: default;
+    }
+
+    .booking-confirm-row.is-static {
+      cursor: default;
+    }
+
+    .booking-confirm-row.is-static:active {
+      opacity: 1;
+    }
+
+    .booking-confirm-row:active {
+      opacity: 0.85;
+    }
+
+    .booking-confirm-row .baby-avatar {
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      object-fit: cover;
+      flex-shrink: 0;
+    }
+
+    .booking-confirm-row .baby-text .name {
+      font-size: 16px;
+      font-weight: 500;
+      color: #000;
+      margin-bottom: 4px;
+    }
+
+    .booking-confirm-row .baby-text .birth {
+      font-size: 14px;
+      color: #000;
+    }
+
+    .booking-confirm-row .label {
+      font-size: 16px;
+      color: #000;
+      width: 82px;
+      flex-shrink: 0;
+    }
+
+    .booking-confirm-row .value {
+      flex: 1;
+      font-size: 14px;
+      color: #000;
+      min-width: 0;
+    }
+
+    .booking-confirm-row .row-arrow {
+      width: 9px;
+      height: 14px;
+      flex-shrink: 0;
+      object-fit: contain;
+    }
+
+    .booking-confirm-divider {
+      height: 1px;
+      background: #d3d3d3;
+      margin: 0 20px;
+    }
+
+    .booking-card-confirm .booking-modal-footer {
+      margin-top: 8px;
+      padding: 0 22px;
+    }
+
+    .booking-btn-confirm {
+      background: #fd898a;
+      color: #fff;
+    }
+
+    .booking-edit-sheet {
+      min-height: 397px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .booking-edit-rows {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .booking-edit-row {
+      display: flex;
+      align-items: center;
+      padding: 0 10px 0 30px;
+      min-height: 48px;
+      border: none;
+      background: none;
+      width: 100%;
+      font-family: inherit;
+      text-align: left;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .booking-edit-row:active {
+      background: rgba(0, 0, 0, 0.03);
+    }
+
+    .booking-edit-row::after {
+      content: "";
+      position: absolute;
+      left: 20px;
+      right: 20px;
+      bottom: 0;
+      height: 0.5px;
+      background: #d3d3d3;
+    }
+
+    .booking-edit-row:last-child::after {
+      display: none;
+    }
+
+    .booking-edit-row.profile-inner {
+      min-height: 92px;
+      padding-top: 32px;
+      padding-bottom: 14px;
+      box-sizing: border-box;
+      cursor: default;
+    }
+
+    .booking-edit-row.is-static {
+      cursor: default;
+    }
+
+    .booking-edit-row.is-static:active {
+      background: none;
+      opacity: 1;
+    }
+
+    .booking-edit-row .row-avatar {
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      object-fit: cover;
+      flex-shrink: 0;
+      margin-right: 17px;
+    }
+
+    .booking-edit-row .row-profile-text {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .booking-edit-row .row-profile-text .name {
+      font-size: 16px;
+      font-weight: 600;
+      color: #000;
+      line-height: 1.3;
+    }
+
+    .booking-edit-row .row-profile-text .birth {
+      font-size: 14px;
+      color: #000;
+      margin-top: 4px;
+    }
+
+    .booking-edit-row .row-label {
+      font-size: 16px;
+      color: #000;
+      width: 82px;
+      flex-shrink: 0;
+    }
+
+    .booking-edit-row .row-value {
+      flex: 1;
+      font-size: 14px;
+      color: #000;
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .booking-edit-row .row-arrow {
+      width: 9px;
+      height: 14px;
+      flex-shrink: 0;
+      margin-left: 8px;
+      margin-right: 10px;
+      object-fit: contain;
+    }
+
+    .booking-edit-actions {
+      display: flex;
+      gap: 20px;
+      padding: 20px 22px 28px;
+      justify-content: center;
+    }
+
+    .booking-edit-btn {
+      width: 170px;
+      height: 40px;
+      border: none;
+      border-radius: 38.5px;
+      font-family: inherit;
+      font-size: 16px;
+      color: var(--text-secondary);
+      cursor: pointer;
+    }
+
+    .booking-edit-btn:active {
+      opacity: 0.85;
+    }
+
+    .booking-edit-btn.delete {
+      background: #c5c5c5;
+    }
+
+    .booking-edit-btn.complete {
+      background: #fd898a;
+    }
+
+    .visually-hidden {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    /* 疫苗隐藏确认弹窗（Figma 58-6939） */
+    .hide-confirm-card {
+      min-height: 257px;
+      padding: 56px 26px 28px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .hide-confirm-title {
+      font-size: 18px;
+      color: #000;
+      text-align: center;
+      line-height: 1.4;
+      margin-bottom: 20px;
+    }
+
+    .hide-confirm-desc {
+      font-size: 16px;
+      color: var(--text-secondary);
+      text-align: center;
+      line-height: 25px;
+      max-width: 347px;
+      margin-bottom: 48px;
+    }
+
+    .hide-confirm-footer {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      width: 100%;
+    }
+
+    .hide-confirm-footer button {
+      width: 170px;
+      height: 40px;
+      border: none;
+      border-radius: 38.5px;
+      font-family: inherit;
+      font-size: 16px;
+      color: var(--text-secondary);
+      cursor: pointer;
+    }
+
+    .hide-confirm-footer button:active {
+      opacity: 0.85;
+    }
+
+    .booking-card-clinic {
+      padding: 0 0 24px;
+    }
+
+    .booking-clinic-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      padding: 20px 20px 20px 16px;
+    }
+
+    .booking-clinic-row .row-icon {
+      width: 28px;
+      height: 28px;
+      flex-shrink: 0;
+      object-fit: contain;
+      margin-top: 2px;
+    }
+
+    .booking-clinic-row .row-text {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .booking-clinic-row .row-title {
+      font-size: 16px;
+      color: #000;
+      margin-bottom: 6px;
+    }
+
+    .booking-clinic-row .row-sub {
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.4;
+    }
+
+    .booking-clinic-row .row-arrow {
+      width: 9px;
+      height: 14px;
+      flex-shrink: 0;
+      margin-top: 8px;
+      object-fit: contain;
+    }
+
+    .booking-clinic-row.clickable {
+      cursor: pointer;
+      border: none;
+      background: none;
+      width: 100%;
+      font-family: inherit;
+      text-align: left;
+    }
+
+    .booking-clinic-row.clickable:active {
+      opacity: 0.85;
+    }
+
+    .booking-clinic-divider {
+      height: 1px;
+      background: #d3d3d3;
+      margin: 0 20px;
+    }
+
+    .booking-flow.is-layer-top {
+      z-index: 19;
+    }
+
+    .booking-flow.is-layer-remark {
+      z-index: 20;
+      align-items: center;
+      justify-content: center;
+      padding: 0 20px;
+    }
+
+    .booking-flow.is-layer-remark .booking-modal-stack {
+      transform: translateY(9px);
+      max-height: none;
+    }
+
+    .booking-flow.is-layer-remark .booking-content-overlay {
+      background: rgba(0, 0, 0, 0.3);
+    }
+
+    .booking-remark-sheet {
+      padding: 20px 20px 24px;
+      width: 100%;
+      max-width: 400px;
+    }
+
+    .booking-remark-input {
+      display: block;
+      width: 100%;
+      height: 200px;
+      padding: 16px;
+      border: none;
+      border-radius: 12px;
+      background: #f7f2ef;
+      font-family: inherit;
+      font-size: 14px;
+      color: #000;
+      line-height: 1.5;
+      resize: none;
+      outline: none;
+      box-sizing: border-box;
+    }
+
+    .booking-remark-input::placeholder {
+      color: #999;
+    }
+
+    .booking-remark-actions {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      margin-top: 17px;
+    }
+
+    .booking-confirm-row--remark,
+    .booking-edit-row--remark {
+      cursor: default;
+    }
+
+    .booking-confirm-row--remark:active,
+    .booking-edit-row--remark:active {
+      opacity: 1;
+      background: none;
+    }
+
+    .booking-remark-arrow {
+      width: 28px;
+      height: 28px;
+      border: none;
+      background: none;
+      padding: 0;
+      margin-left: auto;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    .booking-remark-arrow:active {
+      opacity: 0.75;
+    }
+
+    .booking-remark-arrow .row-arrow {
+      width: 9px;
+      height: 14px;
+      object-fit: contain;
+    }
+
+    .booking-card-clinic-select {
+      padding: 0 0 24px;
+      min-height: 397px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .booking-select-toolbar {
+      padding: 20px 20px 12px;
+    }
+
+    .booking-select-back {
+      width: 28px;
+      height: 28px;
+      border: none;
+      background: none;
+      padding: 0;
+      margin-left: -6px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .booking-select-back img {
+      width: 9px;
+      height: 14px;
+      object-fit: contain;
+      display: block;
+    }
+
+    .booking-clinic-select-list {
+      flex: 1;
+    }
+
+    .booking-clinic-option {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      padding: 18px 20px 18px 16px;
+      border: none;
+      background: none;
+      width: 100%;
+      text-align: left;
+      font-family: inherit;
+      cursor: pointer;
+    }
+
+    .booking-clinic-option:active {
+      opacity: 0.85;
+    }
+
+    .booking-radio-wrap {
+      width: 23px;
+      height: 23px;
+      flex-shrink: 0;
+      border-radius: 50%;
+      border: 2px solid #ccc;
+      box-sizing: border-box;
+      position: relative;
+    }
+
+    .booking-clinic-option.selected .booking-radio-wrap {
+      border-color: #ec7b75;
+    }
+
+    .booking-clinic-option.selected .booking-radio-wrap::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 11px;
+      height: 11px;
+      margin: -5.5px 0 0 -5.5px;
+      border-radius: 50%;
+      background: #ec7b75;
+    }
+
+    .booking-clinic-option-name {
+      flex: 1;
+      font-size: 16px;
+      color: #000;
+      line-height: 1.4;
+    }
+
+    .booking-clinic-option-divider {
+      height: 1px;
+      background: #d3d3d3;
+      margin: 0 20px;
+    }
+
+    .booking-btn-add-clinic {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin: 16px 20px 0;
+      height: 40px;
+      border: none;
+      border-radius: 38.5px;
+      background: #c5c5c5;
+      font-family: inherit;
+      font-size: 16px;
+      color: var(--text-secondary);
+      cursor: pointer;
+    }
+
+    .booking-btn-add-clinic:active {
+      opacity: 0.88;
+    }
+
+    .booking-btn-add-clinic .plus-icon {
+      width: 21px;
+      height: 21px;
+      flex-shrink: 0;
+      line-height: 0;
+    }
+
+    .booking-btn-add-clinic .plus-icon img {
+      width: 21px;
+      height: 21px;
+      display: block;
+      object-fit: contain;
+    }
+
+    .booking-card-clinic .booking-modal-footer {
+      margin-top: 8px;
+      padding: 0 20px;
+    }
+
+    .booking-card-calendar {
+      padding: 20px 20px 24px;
+      min-height: 397px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .booking-month-nav {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 24px;
+      margin-bottom: 16px;
+    }
+
+    .booking-month-nav button {
+      width: 28px;
+      height: 28px;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+      flex-shrink: 0;
+    }
+
+    .booking-month-nav button img {
+      width: 9px;
+      height: 14px;
+      object-fit: contain;
+      display: block;
+    }
+
+    .booking-month-label {
+      font-size: 16px;
+      color: var(--text-muted);
+      min-width: 120px;
+      text-align: center;
+      line-height: 1.25;
+    }
+
+    .booking-weekdays {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      margin-bottom: 8px;
+    }
+
+    .booking-weekdays span {
+      text-align: center;
+      font-size: 12px;
+      color: var(--text-muted);
+      line-height: 22px;
+    }
+
+    .booking-calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      border-top: 0.5px solid #d3d3d3;
+      flex: 1;
+    }
+
+    .booking-calendar-grid .day-cell {
+      aspect-ratio: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 500;
+      color: #000;
+      border-bottom: 0.5px solid #d3d3d3;
+    }
+
+    .booking-calendar-grid .day-cell.disabled {
+      color: var(--date-disabled);
+      cursor: not-allowed;
+    }
+
+    .booking-calendar-grid .day-cell.selectable {
+      cursor: pointer;
+    }
+
+    .booking-calendar-grid .day-cell.selectable:active {
+      opacity: 0.75;
+    }
+
+    .booking-calendar-grid .day-cell.selected {
+      color: #fff;
+    }
+
+    .booking-calendar-grid .day-cell.selected .day-inner {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .booking-modal-footer {
+      display: flex;
+      gap: 20px;
+      margin-top: 20px;
+    }
+
+    .booking-modal-footer button {
+      flex: 1;
+      height: 40px;
+      border: none;
+      border-radius: 38.5px;
+      font-size: 16px;
+      font-family: inherit;
+      cursor: pointer;
+      color: var(--text-secondary);
+    }
+
+    .booking-btn-cancel {
+      background: var(--btn-cancel-bg);
+    }
+
+    .booking-btn-next {
+      background: var(--btn-next-bg);
+    }
+
+    .booking-btn-cancel:active,
+    .booking-btn-next:active {
+      opacity: 0.88;
+    }
+
+    .home-indicator {
+      position: absolute;
+      bottom: 8px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 134px;
+      height: 5px;
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 3px;
+      z-index: 16;
+    }
+
+    @media (max-width: 480px) {
+      body {
+        padding: 0;
+      }
+      .phone {
+        width: 100vw;
+        height: 100vh;
+        max-height: 100vh;
+        border-radius: 0;
+        box-shadow: none;
+      }
+    }
+  </style>
+  <script src="js/load-baby-profile-css.js"></script>
+</head>
+<body>
+  <div class="phone" id="app">
+    <div class="header-wrap" id="headerWrap">
+      <div class="header-bg"></div>
+      <!-- Profile Row -->
+      <div class="profile-row">
+        <div class="profile-info" id="profileSwitcher"></div>
+        <button class="calendar-btn" type="button" aria-label="日历" id="calendarBtn"><img src="images/rili.png" alt="" /></button>
+      </div>
+
+      <!-- Next Appointment Card -->
+      <div class="next-card-wrap" id="nextCardWrap">
+        <div class="next-card">
+          <div class="card-bg"></div>
+          <p class="card-title">下一针预约时间</p>
+          <div class="card-inner">
+            <img class="inner-bg" src="images/next-card-inner.svg" alt="" aria-hidden="true" />
+            <div class="next-info">
+              <div class="accent-line"></div>
+              <div>
+                <div class="date-row">
+                  <span class="date" id="nextApptDate">--</span>
+                  <span class="weekday" id="nextApptWeekday">--</span>
+                </div>
+                <div class="vaccine-row">
+                  <span class="vaccine-name" id="nextApptVaccine">暂无待接种</span>
+                  <span class="tag-free" id="nextApptTag">免费</span>
+                </div>
+              </div>
+            </div>
+            <button class="btn-edit" type="button" id="editPlanBtn">修改计划</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 疫苗列表（整体上移，隐藏卡片在头部/预约卡下层） -->
+    <div class="list-section">
+      <div class="list-area" id="listArea">
+        <div class="list-reveal-panel" id="listRevealPanel" aria-hidden="true"></div>
+        <div class="vaccine-list" id="vaccineList"></div>
+        <div class="add-vaccine-section">
+          <button class="add-vaccine-card" type="button" id="addVaccineBtn" aria-label="添加疫苗">
+            <img src="images/jiahao.png" alt="" />
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="list-fade"></div>
+
+    <!-- 接种预定时间弹窗：底层 index 不变，仅遮罩变暗 -->
+    <div class="booking-flow" id="bookingFlow" hidden aria-hidden="true">
+      <div class="booking-content-overlay" id="bookingContentOverlay"></div>
+      <div class="booking-modal-stack" role="dialog" aria-labelledby="bookingModalTitle" aria-modal="true">
+        <div class="booking-card booking-card-progress">
+          <h2 class="booking-modal-title" id="bookingModalTitle">接种预定时间</h2>
+          <div class="booking-progress-bar">
+            <div class="booking-progress-line"></div>
+            <div class="booking-progress-dots">
+              <span class="booking-progress-dot active"></span>
+              <span class="booking-progress-dot"></span>
+              <span class="booking-progress-dot"></span>
+            </div>
+          </div>
+        </div>
+        <div class="booking-card booking-card-calendar">
+          <div class="booking-month-nav">
+            <button type="button" id="bookingPrevMonth" aria-label="上个月">
+              <img src="images/jiantouyihao.svg" alt="" />
+            </button>
+            <span class="booking-month-label" id="bookingMonthLabel">2026 年 5 月</span>
+            <button type="button" id="bookingNextMonth" aria-label="下个月">
+              <img src="images/jiantouerhao.svg" alt="" />
+            </button>
+          </div>
+          <div class="booking-weekdays">
+            <span>周日</span><span>周一</span><span>周二</span><span>周三</span>
+            <span>周四</span><span>周五</span><span>周六</span>
+          </div>
+          <div class="booking-calendar-grid" id="bookingCalendarGrid"></div>
+          <div class="booking-modal-footer">
+            <button class="booking-btn-cancel" type="button" id="bookingBtnCancel">取消</button>
+            <button class="booking-btn-next" type="button" id="bookingBtnNext">下一步</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 接种门诊弹窗（Figma 57-4363） -->
+    <div class="booking-flow" id="clinicFlow" hidden aria-hidden="true">
+      <div class="booking-content-overlay" id="clinicContentOverlay"></div>
+      <div class="booking-modal-stack" role="dialog" aria-labelledby="clinicModalTitle" aria-modal="true">
+        <div class="booking-card booking-card-progress">
+          <h2 class="booking-modal-title" id="clinicModalTitle">接种门诊</h2>
+          <div class="booking-progress-bar is-step-2">
+            <div class="booking-progress-line"></div>
+            <div class="booking-progress-line-fill"></div>
+            <div class="booking-progress-dots">
+              <span class="booking-progress-dot active"></span>
+              <span class="booking-progress-dot active"></span>
+              <span class="booking-progress-dot"></span>
+            </div>
+          </div>
+        </div>
+        <div class="booking-card booking-card-clinic">
+          <button class="booking-clinic-row clickable" type="button" id="clinicModalSelectRow">
+            <img class="row-icon" src="images/jiezhongmenzhen.png" alt="" />
+            <div class="row-text">
+              <div class="row-title">接种门诊</div>
+              <div class="row-sub" id="clinicModalClinicName">红凌路预防接种站</div>
+            </div>
+            <img class="row-arrow" src="images/jiantouerhao.svg" alt="" />
+          </button>
+          <div class="booking-clinic-divider"></div>
+          <div class="booking-clinic-row">
+            <img class="row-icon" src="images/xiangxidizhi.png" alt="" />
+            <div class="row-text">
+              <div class="row-title">详细地址</div>
+              <div class="row-sub">西岗区高尔基路188-194号</div>
+            </div>
+          </div>
+          <div class="booking-clinic-divider"></div>
+          <div class="booking-clinic-row">
+            <img class="row-icon" src="images/yingyeshijian.png" alt="" />
+            <div class="row-text">
+              <div class="row-title">营业时间</div>
+              <div class="row-sub">8:00-11:00&nbsp;&nbsp;13:00-17:00</div>
+            </div>
+          </div>
+          <div class="booking-modal-footer">
+            <button class="booking-btn-cancel" type="button" id="clinicModalBtnCancel">取消</button>
+            <button class="booking-btn-next" type="button" id="clinicModalBtnNext">下一步</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 接种门诊选择弹窗（Figma 57-4605） -->
+    <div class="booking-flow is-layer-top" id="clinicSelectFlow" hidden aria-hidden="true">
+      <div class="booking-content-overlay" id="clinicSelectContentOverlay"></div>
+      <div class="booking-modal-stack" role="dialog" aria-labelledby="clinicSelectModalTitle" aria-modal="true">
+        <div class="booking-card booking-card-progress">
+          <h2 class="booking-modal-title" id="clinicSelectModalTitle">接种门诊</h2>
+          <div class="booking-progress-bar is-step-2">
+            <div class="booking-progress-line"></div>
+            <div class="booking-progress-line-fill"></div>
+            <div class="booking-progress-dots">
+              <span class="booking-progress-dot active"></span>
+              <span class="booking-progress-dot active"></span>
+              <span class="booking-progress-dot"></span>
+            </div>
+          </div>
+        </div>
+        <div class="booking-card booking-card-clinic-select">
+          <div class="booking-select-toolbar">
+            <button class="booking-select-back" type="button" id="clinicSelectBtnBack" aria-label="返回">
+              <img src="images/jiantouyihao.svg" alt="" />
+            </button>
+          </div>
+          <div class="booking-clinic-select-list" id="clinicSelectList"></div>
+          <button class="booking-btn-add-clinic" type="button" id="clinicSelectBtnAdd">
+            <span class="plus-icon"><img src="images/jiahao.png" alt="" /></span>
+            新增接种门诊地址
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 预定内容确认弹窗（Figma 57-4841） -->
+    <div class="booking-flow is-layer-top" id="confirmFlow" hidden aria-hidden="true">
+      <div class="booking-content-overlay" id="confirmContentOverlay"></div>
+      <div class="booking-modal-stack" role="dialog" aria-labelledby="confirmModalTitle" aria-modal="true">
+        <div class="booking-card booking-card-progress">
+          <h2 class="booking-modal-title" id="confirmModalTitle">预定内容确认</h2>
+          <div class="booking-progress-bar is-step-3">
+            <div class="booking-progress-line"></div>
+            <div class="booking-progress-line-fill"></div>
+            <div class="booking-progress-dots">
+              <span class="booking-progress-dot active"></span>
+              <span class="booking-progress-dot active"></span>
+              <span class="booking-progress-dot active"></span>
+            </div>
+          </div>
+        </div>
+        <div class="booking-card booking-card-confirm">
+          <div class="booking-confirm-row profile-inner">
+            <img class="baby-avatar" id="confirmModalBabyAvatar" src="images/unsplash_JfolIjRnveY.svg" alt="" />
+            <div class="baby-text">
+              <div class="name" id="confirmModalBabyName">皮皮虾</div>
+              <div class="birth" id="confirmModalBabyBirth">2026年4月8号出生</div>
+            </div>
+          </div>
+          <div class="booking-confirm-divider"></div>
+          <div class="booking-confirm-row is-static">
+            <span class="label">接种疫苗</span>
+            <span class="value" id="confirmModalVaccine">乙肝疫苗</span>
+          </div>
+          <div class="booking-confirm-divider"></div>
+          <button class="booking-confirm-row" type="button">
+            <span class="label">接种时间</span>
+            <span class="value" id="confirmModalDate">2026.05.08</span>
+            <img class="row-arrow" src="images/jiantouerhao.svg" alt="" />
+          </button>
+          <div class="booking-confirm-divider"></div>
+          <button class="booking-confirm-row" type="button">
+            <span class="label">接种门诊</span>
+            <span class="value" id="confirmModalClinic">红凌路预防接种站</span>
+            <img class="row-arrow" src="images/jiantouerhao.svg" alt="" />
+          </button>
+          <div class="booking-confirm-divider"></div>
+          <div class="booking-confirm-row booking-confirm-row--remark">
+            <span class="label">添加备注</span>
+            <span class="value" id="confirmModalRemark">带一条防风外套</span>
+            <button class="booking-remark-arrow" type="button" id="confirmModalRemarkArrow" aria-label="编辑备注">
+              <img class="row-arrow" src="images/jiantouerhao.svg" alt="" />
+            </button>
+          </div>
+          <div class="booking-modal-footer">
+            <button class="booking-btn-cancel" type="button" id="confirmModalBtnCancel">取消</button>
+            <button class="booking-btn-confirm" type="button" id="confirmModalBtnConfirm">确定</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 修改计划弹窗（Figma 64-5769） -->
+    <div class="booking-flow is-layer-top" id="editPlanFlow" hidden aria-hidden="true">
+      <div class="booking-content-overlay" id="editPlanContentOverlay"></div>
+      <div class="booking-modal-stack" role="dialog" aria-labelledby="editPlanTitle" aria-modal="true">
+        <div class="booking-card booking-edit-sheet">
+          <h2 class="visually-hidden" id="editPlanTitle">修改计划</h2>
+          <div class="booking-edit-rows">
+            <div class="booking-edit-row profile-inner" id="editPlanProfileRow">
+              <img class="row-avatar" id="editPlanBabyAvatar" src="images/unsplash_JfolIjRnveY.svg" alt="" />
+              <div class="row-profile-text">
+                <div class="name" id="editPlanBabyName">皮皮虾</div>
+                <div class="birth" id="editPlanBabyBirth">2026年4月8号出生</div>
+              </div>
+            </div>
+            <div class="booking-edit-row is-static" id="editPlanVaccineRow">
+              <span class="row-label">接种疫苗</span>
+              <span class="row-value" id="editPlanVaccineValue">乙肝疫苗</span>
+            </div>
+            <button class="booking-edit-row" type="button" id="editPlanTimeRow">
+              <span class="row-label">接种时间</span>
+              <span class="row-value" id="editPlanTimeValue">2026.05.08</span>
+              <img class="row-arrow" src="images/jiantouerhao.svg" alt="" />
+            </button>
+            <button class="booking-edit-row" type="button" id="editPlanClinicRow">
+              <span class="row-label">接种门诊</span>
+              <span class="row-value" id="editPlanClinicValue">红凌路预防接种站</span>
+              <img class="row-arrow" src="images/jiantouerhao.svg" alt="" />
+            </button>
+            <div class="booking-edit-row booking-edit-row--remark">
+              <span class="row-label">添加备注</span>
+              <span class="row-value" id="editPlanNoteValue">带一条防风外套</span>
+              <button class="booking-remark-arrow" type="button" id="editPlanNoteArrow" aria-label="编辑备注">
+                <img class="row-arrow" src="images/jiantouerhao.svg" alt="" />
+              </button>
+            </div>
+          </div>
+          <div class="booking-edit-actions">
+            <button class="booking-edit-btn delete" type="button" id="editPlanBtnDelete">删除</button>
+            <button class="booking-edit-btn complete" type="button" id="editPlanBtnComplete">完成</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 添加备注弹窗（Figma 227-4175） -->
+    <div class="booking-flow is-layer-top is-layer-remark" id="remarkFlow" hidden aria-hidden="true">
+      <div class="booking-content-overlay" id="remarkContentOverlay"></div>
+      <div class="booking-modal-stack" role="dialog" aria-labelledby="remarkModalTitle" aria-modal="true">
+        <div class="booking-card booking-remark-sheet">
+          <h2 class="visually-hidden" id="remarkModalTitle">添加备注</h2>
+          <textarea
+            class="booking-remark-input"
+            id="remarkInput"
+            maxlength="200"
+            placeholder="请输入备注"
+            aria-label="备注内容"
+          ></textarea>
+          <div class="booking-remark-actions">
+            <button class="booking-edit-btn delete" type="button" id="remarkBtnCancel">取消</button>
+            <button class="booking-edit-btn complete" type="button" id="remarkBtnComplete">完成</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 疫苗隐藏确认弹窗（Figma 58-6939） -->
+    <div class="booking-flow is-layer-top" id="hideConfirmFlow" hidden aria-hidden="true">
+      <div class="booking-content-overlay" id="hideConfirmContentOverlay"></div>
+      <div class="booking-modal-stack" role="dialog" aria-labelledby="hideConfirmTitle" aria-modal="true">
+        <div class="booking-card hide-confirm-card">
+          <h2 class="hide-confirm-title" id="hideConfirmTitle">确定将该剂次疫苗从列表中移除吗？</h2>
+          <p class="hide-confirm-desc">移除后，疫苗会在疫苗页面中隐藏不做显示，后续如需恢复，可前往添加疫苗页面中操作添加显示；</p>
+          <div class="hide-confirm-footer">
+            <button class="booking-btn-cancel" type="button" id="hideConfirmBtnCancel">取消</button>
+            <button class="booking-btn-confirm" type="button" id="hideConfirmBtnConfirm">确认</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom Navigation -->
+        <nav class="bottom-nav" aria-label="主导航">
+      <button class="nav-item active" data-nav="appointment" type="button"><span class="nav-icon"><img src="" alt="" /></span><span class="nav-label">预约</span></button>
+      <button class="nav-item" data-nav="schedule" type="button"><span class="nav-icon"><img src="" alt="" /></span><span class="nav-label">接种时间表</span></button>
+      <button class="nav-item" data-nav="growth" type="button"><span class="nav-icon"><img src="" alt="" /></span><span class="nav-label">成长曲线</span></button>
+      <button class="nav-item" data-nav="profile" type="button"><span class="nav-icon"><img src="" alt="" /></span><span class="nav-label">我的</span></button>
+    </nav>
+    <div class="home-indicator" aria-hidden="true"></div>
+  </div>
+
+  <script src="js/system-time.js"></script>
+  <script src="js/baby-profile.js"></script>
+  <script src="js/vaccine-schedule.js"></script>
+  <script src="js/vaccine-detail.js"></script>
+  <script src="js/modal-motion.js"></script>
+  <script src="js/vaccine-booking-time.js"></script>
+  <script src="js/vaccine-booking-clinic.js"></script>
+  <script src="js/vaccine-booking-clinic-select.js"></script>
+  <script src="js/vaccine-booking-confirm.js"></script>
+  <script src="js/vaccine-booking-remark.js"></script>
+  <script src="js/vaccine-edit-plan.js"></script>
+  <script src="js/vaccine-hide-confirm.js"></script>
+  <script src="js/momentum-scroll.js"></script>
+  <script>
+    const ASSETS = {
+      syringe: "images/zhentou.png",
+      help: "images/kepuwenhao.png",
+      doseDone: "images/yizhongqiu.png",
+      doseBooked: "images/yuyueqiu.png",
+      addVaccineIcon: "images/jiahao.png"
+    };
+
+    const HIDE_ICON_SVG = `
+      <svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M18 8.5C11.5 8.5 6.2 12.4 4 18c2.2 5.6 7.5 9.5 14 9.5s11.8-3.9 14-9.5c-2.2-5.6-7.5-9.5-14-9.5z" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/>
+        <circle cx="18" cy="18" r="4.5" stroke="currentColor" stroke-width="2.2"/>
+        <path d="M8 8l20 20" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+      </svg>`;
+
+    const SWIPE_WIDTH = 110;
+    const SWIPE_SNAP_RATIO = 0.35;
+
+    const PINNED_VACCINES = new Set(["卡介苗", "乙肝疫苗"]);
+
+    const bcgVaccine = {
+      name: "卡介苗",
+      doses: [{ type: "done", num: "1", date: "26/3/18" }]
+    };
+
+    const vaccines = [
+      {
+        name: "乙肝疫苗",
+        doses: [
+          { type: "done", num: "1", date: "26/3/18" },
+          { type: "future", num: "2", date: "--/--/--" },
+          { type: "future", num: "3", date: "--/--/--" }
+        ]
+      },
+      {
+        name: "脊髓灰质炎疫苗",
+        doses: [
+          { type: "future", num: "1", date: "--/--/--" },
+          { type: "future", num: "2", date: "--/--/--" },
+          { type: "future", num: "3", date: "--/--/--" },
+          { type: "future", num: "4", date: "--/--/--" }
+        ]
+      },
+      {
+        name: "百白破疫苗",
+        doses: [
+          { type: "future", num: "1", date: "--/--/--" },
+          { type: "future", num: "2", date: "--/--/--" },
+          { type: "future", num: "3", date: "--/--/--" },
+          { type: "future", num: "4", date: "--/--/--" },
+          { type: "future", num: "5", date: "--/--/--" }
+        ]
+      },
+      {
+        name: "A群脑流疫苗",
+        doses: [
+          { type: "future", num: "1", date: "--/--/--" },
+          { type: "future", num: "2", date: "--/--/--" }
+        ]
+      },
+      {
+        name: "麻腮风疫苗",
+        doses: [{ type: "future", num: "1", date: "--/--/--" }]
+      },
+      {
+        name: "乙脑减毒疫苗",
+        doses: [
+          { type: "future", num: "1", date: "--/--/--" },
+          { type: "future", num: "2", date: "--/--/--" }
+        ]
+      },
+      {
+        name: "乙脑灭活疫苗",
+        doses: [
+          { type: "future", num: "1", date: "--/--/--" },
+          { type: "future", num: "2", date: "--/--/--" },
+          { type: "future", num: "3", date: "--/--/--" },
+          { type: "future", num: "4", date: "--/--/--" }
+        ]
+      },
+      {
+        name: "甲肝减毒疫苗",
+        doses: [{ type: "future", num: "1", date: "--/--/--" }]
+      },
+      {
+        name: "甲肝灭活疫苗",
+        doses: [
+          { type: "future", num: "1", date: "--/--/--" },
+          { type: "future", num: "2", date: "--/--/--" }
+        ]
+      },
+      {
+        name: "A+C群脑流疫苗",
+        doses: [
+          { type: "future", num: "1", date: "--/--/--" },
+          { type: "future", num: "2", date: "--/--/--" }
+        ]
+      }
+    ];
+
+    const optionalVaccineTemplates = {
+      "五联疫苗": [
+        { type: "future", num: "1", date: "--/--/--" },
+        { type: "future", num: "2", date: "--/--/--" },
+        { type: "future", num: "3", date: "--/--/--" },
+        { type: "future", num: "4", date: "--/--/--" }
+      ],
+      "五价轮状疫苗": [
+        { type: "future", num: "1", date: "--/--/--" },
+        { type: "future", num: "2", date: "--/--/--" },
+        { type: "future", num: "3", date: "--/--/--" }
+      ],
+      "13价肺炎疫苗": [
+        { type: "future", num: "1", date: "--/--/--" },
+        { type: "future", num: "2", date: "--/--/--" },
+        { type: "future", num: "3", date: "--/--/--" },
+        { type: "future", num: "4", date: "--/--/--" }
+      ],
+      "手足口疫苗": [
+        { type: "future", num: "1", date: "--/--/--" },
+        { type: "future", num: "2", date: "--/--/--" }
+      ],
+      "水痘疫苗": [
+        { type: "future", num: "1", date: "--/--/--" },
+        { type: "future", num: "2", date: "--/--/--" }
+      ],
+      "流感疫苗": [
+        { type: "future", num: "1", date: "--/--/--" }
+      ]
+    };
+
+    function getAllVaccinesRaw(now) {
+      const added = BabyProfile.getAddedVaccines();
+      const existingNames = new Set(vaccines.map((v) => v.name));
+      const extra = added
+        .filter((name) => !existingNames.has(name))
+        .map((name) => ({
+          name,
+          doses: optionalVaccineTemplates[name] || [{ type: "future", num: "1", date: "--/--/--" }]
+        }));
+      const current = now || SystemTime.getNow();
+      const baseList = [bcgVaccine, ...vaccines, ...extra];
+      const withCompleted = BabyProfile.applyCompletedDosesToVaccines(baseList);
+      const withBooked = BabyProfile.applyBookedDosesToVaccines(withCompleted);
+      const merged = VaccineSchedule.applyAutoDoneBySchedule(withBooked, current);
+      BabyProfile.syncCompletedDosesFromVaccineList(merged);
+      return merged;
+    }
+
+    function getSortedVaccines(now) {
+      return VaccineSchedule.sortVaccinesForHome(getAllVaccinesRaw(now));
+    }
+
+    function getVaccineCardState(v, now) {
+      const birth = VaccineSchedule.parseBirthFromPage();
+      const completed = VaccineSchedule.isVaccineCompleted(v);
+      const dueNow =
+        !completed && VaccineSchedule.isInCurrentScheduleMonth(v.name, now, birth);
+      return { completed, dueNow, muted: completed };
+    }
+
+    const NAV_ROUTES = {
+      appointment: "index.html",
+      schedule: "接种时间表.html",
+      growth: "成长曲线.html",
+      profile: "我的.html"
+    };
+
+    var FUTURE_RING_NAMES = ["", "xuxianqiuyi", "xuxianqiuer", "xuxianqiusan", "xuxianqiusi", "xuxianqiuwu"];
+
+    function futureRingSrc(num) {
+      var n = Math.min(5, Math.max(1, parseInt(num, 10) || 1));
+      return "images/" + FUTURE_RING_NAMES[n] + ".png";
+    }
+
+    function renderDose(dose, vaccineName) {
+      if (dose.type === "future") {
+        return `
+          <div class="dose-item">
+            <button class="dose-circle future" type="button"
+              data-vaccine="${vaccineName}" data-dose="${dose.num}" aria-label="预约${vaccineName}第${dose.num}剂">
+              <img class="bg-img" src="${futureRingSrc(dose.num)}" alt="" />
+              <span class="dose-num">${dose.num}</span>
+            </button>
+            <span class="dose-date">${dose.date}</span>
+          </div>
+        `;
+      }
+
+      const label = dose.label || (dose.type === "booked" ? "预约" : "已种");
+      const ballSrc = dose.type === "booked" ? ASSETS.doseBooked : ASSETS.doseDone;
+      return `
+        <div class="dose-item">
+          <div class="dose-circle ${dose.type} has-ball-img" role="img" aria-label="${label}">
+            <img class="bg-img" src="${ballSrc}" alt="${label}" />
+          </div>
+          <span class="dose-date">${dose.date}</span>
+        </div>
+      `;
+    }
+
+    function renderVaccineItem(v, options = {}) {
+      const openClass = options.open ? " open" : "";
+      const now = options.now || SystemTime.getNow();
+      const state = getVaccineCardState(v, now);
+      const completedClass = state.completed ? " is-completed" : "";
+      const dueClass = state.dueNow ? " is-due" : "";
+      return `
+        <article class="vaccine-item${completedClass}" data-vaccine="${v.name}" data-completed="${state.completed}">
+          <div class="timeline-side${dueClass}">
+            <img class="timeline-syringe" src="${ASSETS.syringe}" alt="" />
+            <span class="timeline-bar" aria-hidden="true"></span>
+          </div>
+          <div class="swipe-container">
+            <div class="swipe-hide" aria-hidden="true">
+              <span class="hide-icon">${HIDE_ICON_SVG}</span>
+              <button class="swipe-hide-btn" type="button" aria-label="隐藏${v.name}"></button>
+            </div>
+            <div class="swipe-panel${openClass}">
+              <div class="vaccine-card${state.muted ? " muted" : ""}">
+                ${v.doses.length > 1 ? '<div class="connector"></div>' : ""}
+                <div class="card-head">
+                  <h3>${v.name}</h3>
+                  <button class="help-icon" type="button" aria-label="${v.name}疫苗说明">
+                    <img src="${ASSETS.help}" alt="" />
+                  </button>
+                </div>
+                <div class="doses-row">
+                  ${v.doses.map((d) => renderDose(d, v.name)).join("")}
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+      `;
+    }
+
+    function findNextBookedAppointment(vaccines) {
+      let best = null;
+      vaccines.forEach(function (v) {
+        v.doses.forEach(function (d) {
+          if (d.type !== "booked") return;
+          const info = BabyProfile.getBookedDose(v.name, d.num);
+          if (!info || !info.date) return;
+          const parts = info.date.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
+          if (!parts) return;
+          const date = new Date(
+            parseInt(parts[1], 10),
+            parseInt(parts[2], 10) - 1,
+            parseInt(parts[3], 10)
+          );
+          if (!best || date < best.date) {
+            best = {
+              vaccineName: v.name,
+              doseNum: d.num,
+              date: date
+            };
+          }
+        });
+      });
+      return best;
+    }
+
+    function updateNextAppointment(now) {
+      const headerWrap = document.getElementById("headerWrap");
+      const booked = findNextBookedAppointment(getAllVaccinesRaw());
+      const dateEl = document.getElementById("nextApptDate");
+      const weekdayEl = document.getElementById("nextApptWeekday");
+      const vaccineEl = document.getElementById("nextApptVaccine");
+      const tagEl = document.getElementById("nextApptTag");
+
+      if (!booked) {
+        headerWrap.classList.remove("has-appointment");
+        return;
+      }
+
+      headerWrap.classList.add("has-appointment");
+      dateEl.textContent = SystemTime.formatDateYMD(booked.date);
+      weekdayEl.textContent = SystemTime.formatWeekday(booked.date);
+      vaccineEl.textContent = `${booked.vaccineName} 第${booked.doseNum}剂`;
+      tagEl.textContent = "免费";
+      tagEl.style.display = "";
+    }
+
+    function renderVaccineList(now) {
+      const current = now || SystemTime.getNow();
+      const sorted = getSortedVaccines(current);
+      const hiddenSet = new Set(
+        BabyProfile.getHiddenVaccines().filter(function (name) {
+          return !PINNED_VACCINES.has(name);
+        })
+      );
+      const completed = [];
+      const active = [];
+
+      sorted.forEach(function (v) {
+        if (hiddenSet.has(v.name)) return;
+        const state = getVaccineCardState(v, current);
+        if (state.completed) completed.push(v);
+        else active.push(v);
+      });
+
+      document.getElementById("vaccineList").innerHTML =
+        '<div class="vaccine-list-shell">' +
+          '<div class="completed-stack" id="completedStack">' +
+            '<div class="completed-stack-inner" id="completedStackInner">' +
+              completed
+                .map(function (v) {
+                  return renderVaccineItem(v, { now: current });
+                })
+                .join("") +
+            "</div>" +
+          "</div>" +
+          '<div class="active-stack" id="activeStack">' +
+            active
+              .map(function (v) {
+                return renderVaccineItem(v, { now: current });
+              })
+              .join("") +
+          "</div>" +
+        "</div>";
+    }
+
+    const LIST_REVEAL_MASK_HEIGHT = 149;
+    /* 乙肝首卡与「下一针预约」卡底之间的可见间距 */
+    const LIST_APPOINTMENT_GAP = 16;
+
+    const completedRevealState = {
+      fullHeight: 0,
+      revealHeight: 0,
+      pulling: false,
+      pullStartY: 0,
+      pullStartReveal: 0,
+      lastScrollTop: 0
+    };
+
+    function getCompletedRevealElements() {
+      return {
+        listArea: document.getElementById("listArea"),
+        stack: document.getElementById("completedStack"),
+        inner: document.getElementById("completedStackInner"),
+        activeStack: document.getElementById("activeStack")
+      };
+    }
+
+    function getActiveStackAnchorBase() {
+      const headerWrap = document.getElementById("headerWrap");
+      const listArea = document.getElementById("listArea");
+      if (
+        !headerWrap ||
+        !listArea ||
+        !headerWrap.classList.contains("has-appointment")
+      ) {
+        return LIST_REVEAL_MASK_HEIGHT;
+      }
+
+      const nextCardWrap = document.getElementById("nextCardWrap");
+      if (!nextCardWrap) {
+        return LIST_REVEAL_MASK_HEIGHT + LIST_APPOINTMENT_GAP;
+      }
+
+      const listRect = listArea.getBoundingClientRect();
+      const nextRect = nextCardWrap.getBoundingClientRect();
+      const anchor = nextRect.bottom - listRect.top + LIST_APPOINTMENT_GAP;
+      return Math.max(LIST_REVEAL_MASK_HEIGHT, Math.round(anchor));
+    }
+
+    function syncCompletedRevealLayout(revealHeight) {
+      const els = getCompletedRevealElements();
+      if (!els.activeStack || !els.stack) return;
+      const fullHeight = completedRevealState.fullHeight;
+      const anchorBase = getActiveStackAnchorBase();
+      const headerWrap = document.getElementById("headerWrap");
+      const hasAppointment =
+        headerWrap && headerWrap.classList.contains("has-appointment");
+
+      let stackMarginTop = 0;
+      let paddingTop = anchorBase;
+
+      if (fullHeight > 0) {
+        const progress = revealHeight / fullHeight;
+        if (hasAppointment) {
+          /* 已完成疫苗从预约卡下方滑到首卡初始位置；下方列表同步下移 */
+          stackMarginTop = Math.round(anchorBase * progress);
+          paddingTop = Math.round(anchorBase * (1 - progress));
+        } else {
+          stackMarginTop = 0;
+          paddingTop = Math.max(0, anchorBase - revealHeight);
+        }
+      }
+
+      els.stack.style.marginTop = stackMarginTop + "px";
+      els.activeStack.style.paddingTop = paddingTop + "px";
+    }
+
+    function syncActiveStackAnchor(revealHeight) {
+      syncCompletedRevealLayout(revealHeight);
+    }
+
+    function setActiveStackMotion(mode) {
+      const activeStack = document.getElementById("activeStack");
+      if (!activeStack) return;
+      activeStack.classList.remove("is-snapping", "is-revealing");
+      if (mode === "snap") activeStack.classList.add("is-snapping");
+      if (mode === "reveal") activeStack.classList.add("is-revealing");
+    }
+
+    function measureCompletedFullHeight() {
+      const els = getCompletedRevealElements();
+      if (!els.stack || !els.inner) return 0;
+      let height = 0;
+      els.inner.querySelectorAll(".vaccine-item").forEach(function (item) {
+        height += item.offsetHeight;
+      });
+      if (height <= 0 && els.inner.children.length > 0) {
+        const prevHeight = els.stack.style.height;
+        els.stack.style.height = "auto";
+        els.stack.style.overflow = "visible";
+        height = els.inner.scrollHeight;
+        els.stack.style.height = prevHeight;
+        els.stack.style.overflow = "";
+      }
+      completedRevealState.fullHeight = height;
+      updateListRevealMode();
+      return height;
+    }
+
+    function syncCompletedStackTransform(revealHeight) {
+      const els = getCompletedRevealElements();
+      if (!els.inner || !els.stack) return;
+      const fullHeight = completedRevealState.fullHeight;
+      const headerWrap = document.getElementById("headerWrap");
+      const hasAppointment =
+        headerWrap && headerWrap.classList.contains("has-appointment");
+
+      if (hasAppointment) {
+        /* 随 marginTop 下滑，从顶部露出已完成疫苗卡片 */
+        els.inner.style.transform = "";
+      } else {
+        const hiddenOffset = Math.max(0, fullHeight - revealHeight);
+        els.inner.style.transform =
+          hiddenOffset > 0 ? "translateY(-" + hiddenOffset + "px)" : "";
+      }
+      els.stack.classList.toggle("is-visible", revealHeight > 0);
+    }
+
+    function updateListRevealMode() {
+      const listSection = document.querySelector(".list-section");
+      if (!listSection) return;
+      listSection.classList.toggle(
+        "has-completed-pull",
+        completedRevealState.fullHeight > 0
+      );
+    }
+
+    function setCompletedRevealHeight(value, mode) {
+      const els = getCompletedRevealElements();
+      if (!els.stack) return;
+      const fullHeight = completedRevealState.fullHeight;
+      completedRevealState.revealHeight = Math.max(0, Math.min(fullHeight, value));
+      els.stack.style.height = completedRevealState.revealHeight + "px";
+      els.stack.classList.remove("is-revealing", "is-snapping");
+      if (mode === "reveal") els.stack.classList.add("is-revealing");
+      if (mode === "snap") els.stack.classList.add("is-snapping");
+      syncCompletedStackTransform(completedRevealState.revealHeight);
+      setActiveStackMotion(mode);
+      syncActiveStackAnchor(completedRevealState.revealHeight);
+      updateListRevealMode();
+    }
+
+    function collapseCompletedReveal(mode) {
+      completedRevealState.pulling = false;
+      const els = getCompletedRevealElements();
+      if (completedRevealState.fullHeight <= 0) {
+        if (els.stack) {
+          els.stack.style.height = "0px";
+          els.stack.style.marginTop = "0px";
+          els.stack.classList.remove("is-visible");
+        }
+        if (els.inner) els.inner.style.transform = "";
+        completedRevealState.revealHeight = 0;
+        syncActiveStackAnchor(0);
+        updateListRevealMode();
+        return;
+      }
+      setCompletedRevealHeight(0, mode || "snap");
+      if (els.listArea) {
+        els.listArea.scrollTop = 0;
+        completedRevealState.lastScrollTop = 0;
+      }
+    }
+
+    function expandCompletedReveal(mode) {
+      completedRevealState.pulling = false;
+      if (completedRevealState.fullHeight <= 0) return;
+      setCompletedRevealHeight(completedRevealState.fullHeight, mode || "reveal");
+    }
+
+    function resetCompletedRevealView() {
+      const els = getCompletedRevealElements();
+      if (!els.listArea || !els.stack || !els.inner) return;
+      measureCompletedFullHeight();
+      els.listArea.scrollTop = 0;
+      completedRevealState.lastScrollTop = 0;
+      if (els.stack) els.stack.classList.remove("is-revealing", "is-snapping");
+      if (els.activeStack) els.activeStack.classList.remove("is-snapping");
+      collapseCompletedReveal("snap");
+    }
+
+    var listMomentumScroll = null;
+
+    function bindCompletedRevealEvents() {
+      const listArea = document.getElementById("listArea");
+      const appRoot = document.getElementById("app");
+      if (!listArea || !appRoot || listArea.dataset.revealBound === "1") return;
+      listArea.dataset.revealBound = "1";
+
+      /* 【首页列表惯性 / 越界回弹 — 改下面数字，保存后 Ctrl+F5 刷新】
+       * maxRubber     越界能拉多长  |  springReturn  回弹快慢（越小越慢越软）
+       * rubberGain    越界力度      |  friction        惯性滑多久
+       * rubberDamp    冲到边缘顺不顺 |  touchBoost       松手滑行力度 */
+      if (window.MomentumScroll && !listMomentumScroll) {
+        listMomentumScroll = MomentumScroll.attach(listArea, Object.assign({}, MomentumScroll.WECHAT_PRESET, {
+          bindWheel: false,
+          shouldSkipTouch: function () {
+            return completedRevealState.pulling;
+          }
+        }));
+      }
+
+      function normalizeWheelDelta(e) {
+        let dy = e.deltaY;
+        if (e.deltaMode === 1) dy *= 16;
+        else if (e.deltaMode === 2) dy *= listArea.clientHeight;
+        return dy;
+      }
+
+      function canRevealAtTop() {
+        return listArea.scrollTop <= 1 || completedRevealState.revealHeight > 0;
+      }
+
+      function applyRevealWheel(deltaY) {
+        measureCompletedFullHeight();
+        if (completedRevealState.fullHeight <= 0) return false;
+
+        /* 向下滚：收起已完成疫苗区，但不拦截，让列表继续向下滚 */
+        if (deltaY > 0) {
+          if (completedRevealState.revealHeight > 0) {
+            collapseCompletedReveal("snap");
+          }
+          return false;
+        }
+
+        /* 向上滚：仅在列表已到顶时展开已完成疫苗区 */
+        if (deltaY < 0 && listArea.scrollTop <= 1) {
+          if (completedRevealState.revealHeight >= completedRevealState.fullHeight) {
+            return false;
+          }
+          const step = Math.max(Math.abs(deltaY) * 0.85, 28);
+          setCompletedRevealHeight(
+            Math.min(
+              completedRevealState.fullHeight,
+              completedRevealState.revealHeight + step
+            ),
+            completedRevealState.revealHeight >
+              completedRevealState.fullHeight * 0.72
+              ? "reveal"
+              : null
+          );
+          return true;
+        }
+
+        return false;
+      }
+
+      function beginPull(clientY) {
+        measureCompletedFullHeight();
+        if (completedRevealState.fullHeight <= 0) return false;
+        if (listArea.scrollTop <= 1 || completedRevealState.revealHeight > 0) {
+          completedRevealState.pulling = true;
+          completedRevealState.pullStartY = clientY;
+          completedRevealState.pullStartReveal = completedRevealState.revealHeight;
+          const stack = document.getElementById("completedStack");
+          const activeStack = document.getElementById("activeStack");
+          if (stack) stack.classList.remove("is-revealing", "is-snapping");
+          if (activeStack) activeStack.classList.remove("is-snapping");
+          return true;
+        }
+        return false;
+      }
+
+      function movePull(clientY, preventDefault) {
+        if (!completedRevealState.pulling || completedRevealState.fullHeight <= 0) return;
+        const dy = clientY - completedRevealState.pullStartY;
+
+        if (dy > 0 && listArea.scrollTop <= 1) {
+          if (preventDefault) preventDefault();
+          setCompletedRevealHeight(
+            completedRevealState.pullStartReveal + dy * 0.88,
+            null
+          );
+          return;
+        }
+
+        if (dy < -8 && completedRevealState.revealHeight > 0) {
+          collapseCompletedReveal("snap");
+          completedRevealState.pulling = false;
+        }
+      }
+
+      function endPull() {
+        if (!completedRevealState.pulling || completedRevealState.fullHeight <= 0) return;
+        completedRevealState.pulling = false;
+        if (completedRevealState.revealHeight > completedRevealState.fullHeight * 0.28) {
+          expandCompletedReveal("reveal");
+        } else {
+          collapseCompletedReveal("snap");
+        }
+      }
+
+      listArea.addEventListener(
+        "touchstart",
+        function (e) {
+          beginPull(e.touches[0].clientY);
+        },
+        { passive: true }
+      );
+
+      listArea.addEventListener(
+        "touchmove",
+        function (e) {
+          movePull(e.touches[0].clientY, function () {
+            e.preventDefault();
+          });
+        },
+        { passive: false }
+      );
+
+      listArea.addEventListener(
+        "touchend",
+        endPull,
+        { passive: true }
+      );
+
+      listArea.addEventListener("mousedown", function (e) {
+        if (e.button !== 0) return;
+        if (beginPull(e.clientY)) {
+          e.preventDefault();
+          listArea.dataset.mousePull = "1";
+        }
+      });
+
+      window.addEventListener("mousemove", function (e) {
+        if (listArea.dataset.mousePull !== "1") return;
+        movePull(e.clientY, null);
+      });
+
+      window.addEventListener("mouseup", function () {
+        if (listArea.dataset.mousePull !== "1") return;
+        listArea.dataset.mousePull = "0";
+        endPull();
+      });
+
+      listArea.addEventListener(
+        "wheel",
+        function (e) {
+          const delta = normalizeWheelDelta(e);
+          if (applyRevealWheel(delta)) {
+            if (listMomentumScroll) listMomentumScroll.cancel();
+            e.preventDefault();
+            return;
+          }
+          if (listMomentumScroll) listMomentumScroll.noteWheel(delta);
+        },
+        { passive: false }
+      );
+
+      listArea.addEventListener(
+        "scroll",
+        function () {
+          const st = listArea.scrollTop;
+          if (st > completedRevealState.lastScrollTop + 2 && completedRevealState.revealHeight > 0) {
+            collapseCompletedReveal("snap");
+          }
+          completedRevealState.lastScrollTop = st;
+        },
+        { passive: true }
+      );
+    }
+
+    function afterRenderCompletedReveal(reset) {
+      bindCompletedRevealEvents();
+      requestAnimationFrame(function () {
+        requestAnimationFrame(function () {
+          if (reset) resetCompletedRevealView();
+          else {
+            const prev = completedRevealState.revealHeight;
+            measureCompletedFullHeight();
+            if (prev > 0) {
+              setCompletedRevealHeight(
+                Math.min(prev, completedRevealState.fullHeight),
+                null
+              );
+            } else {
+              syncActiveStackAnchor(0);
+            }
+          }
+        });
+      });
+    }
+
+    function initCompletedReveal() {
+      afterRenderCompletedReveal(true);
+    }
+
+    function closeAllSwipePanels(exceptPanel) {
+      document.querySelectorAll(".swipe-panel.open").forEach(function (panel) {
+        if (panel !== exceptPanel) {
+          panel.classList.remove("open", "dragging");
+          panel.style.transform = "";
+        }
+      });
+    }
+
+    function initSwipeCards() {
+      const listRoot = document.getElementById("vaccineList");
+      if (!listRoot || listRoot.dataset.swipeBound === "1") return;
+      listRoot.dataset.swipeBound = "1";
+
+      let activeSwipe = null;
+
+      function clearActiveSwipe() {
+        if (!activeSwipe) return;
+        window.removeEventListener("mousemove", onPointerMove);
+        window.removeEventListener("mouseup", onPointerUp);
+        window.removeEventListener("touchmove", onPointerMove);
+        window.removeEventListener("touchend", onPointerUp);
+        activeSwipe = null;
+      }
+
+      function readPanelOffset(panel) {
+        if (panel.classList.contains("open")) return -SWIPE_WIDTH;
+        const match = panel.style.transform.match(/translateX\((-?\d+(?:\.\d+)?)px\)/);
+        return match ? parseFloat(match[1]) : 0;
+      }
+
+      function applyPanelOffset(panel, offset, dragging) {
+        const clamped = Math.max(-SWIPE_WIDTH, Math.min(0, offset));
+        panel.classList.toggle("dragging", dragging);
+        if (dragging) {
+          panel.classList.remove("open");
+          panel.style.transform = "translateX(" + clamped + "px)";
+        } else {
+          panel.style.transform = "";
+          panel.classList.toggle("open", clamped <= -SWIPE_WIDTH * SWIPE_SNAP_RATIO);
+        }
+      }
+
+      function onPointerMove(e) {
+        if (!activeSwipe) return;
+        const point = e.touches ? e.touches[0] : e;
+        const dx = point.clientX - activeSwipe.startX;
+        const dy = point.clientY - activeSwipe.startY;
+
+        if (!activeSwipe.axisLock) {
+          if (Math.abs(dx) < 8 && Math.abs(dy) < 8) return;
+          activeSwipe.axisLock = Math.abs(dx) > Math.abs(dy) * 1.25 ? "x" : "y";
+          if (activeSwipe.axisLock !== "x") {
+            clearActiveSwipe();
+            return;
+          }
+        }
+
+        if (activeSwipe.axisLock !== "x") return;
+        if (e.cancelable) e.preventDefault();
+        applyPanelOffset(activeSwipe.panel, activeSwipe.originX + dx, true);
+      }
+
+      function onPointerUp(e) {
+        if (!activeSwipe) return;
+        const point = e.changedTouches ? e.changedTouches[0] : e;
+        if (activeSwipe.axisLock === "x") {
+          const dx = point.clientX - activeSwipe.startX;
+          applyPanelOffset(activeSwipe.panel, activeSwipe.originX + dx, false);
+        } else if (activeSwipe.panel) {
+          activeSwipe.panel.classList.remove("dragging");
+        }
+        clearActiveSwipe();
+      }
+
+      function beginSwipe(panel, clientX, clientY) {
+        const isOpen = panel.classList.contains("open");
+        closeAllSwipePanels(isOpen ? panel : null);
+        activeSwipe = {
+          panel: panel,
+          startX: clientX,
+          startY: clientY,
+          originX: readPanelOffset(panel),
+          axisLock: null
+        };
+        window.addEventListener("mousemove", onPointerMove);
+        window.addEventListener("mouseup", onPointerUp);
+        window.addEventListener("touchmove", onPointerMove, { passive: false });
+        window.addEventListener("touchend", onPointerUp);
+      }
+
+      listRoot.addEventListener("mousedown", function (e) {
+        const panel = e.target.closest(".swipe-panel");
+        if (!panel || !listRoot.contains(panel)) return;
+        if (e.target.closest(".dose-circle.future")) return;
+        if (e.button !== 0) return;
+        e.preventDefault();
+        beginSwipe(panel, e.clientX, e.clientY);
+      });
+
+      listRoot.addEventListener("touchstart", function (e) {
+        const panel = e.target.closest(".swipe-panel");
+        if (!panel || !listRoot.contains(panel)) return;
+        if (e.target.closest(".dose-circle.future")) return;
+        beginSwipe(panel, e.touches[0].clientX, e.touches[0].clientY);
+      }, { passive: true });
+
+      listRoot.addEventListener("click", function (e) {
+        const hideBtn = e.target.closest(".swipe-hide-btn");
+        if (hideBtn) {
+          e.stopPropagation();
+          const item = hideBtn.closest(".vaccine-item");
+          const vaccineName = item?.dataset.vaccine || "";
+          closeAllSwipePanels();
+          VaccineHideConfirm.open({ vaccine: vaccineName });
+          return;
+        }
+
+        const openPanel = e.target.closest(".swipe-panel.open");
+        if (!openPanel) return;
+        if (e.target.closest(".dose-circle.future, .help-icon")) return;
+        openPanel.classList.remove("open", "dragging");
+        openPanel.style.transform = "";
+      });
+    }
+
+    function refreshPageUI(now, options) {
+      const opts = options || {};
+      renderVaccineList(now);
+      updateNextAppointment(now);
+      initSwipeCards();
+      initDoseClicks();
+      initHelpIcons();
+      applyHiddenVaccines();
+      afterRenderCompletedReveal(!!opts.resetReveal);
+    }
+
+    function initTimeSync() {
+      let lastMinuteKey = -1;
+      SystemTime.subscribe((now) => {
+        const minuteKey = now.getHours() * 60 + now.getMinutes();
+        if (minuteKey !== lastMinuteKey) {
+          lastMinuteKey = minuteKey;
+          refreshPageUI(now);
+        }
+      });
+    }
+
+    function initHelpIcons() {
+      document.querySelectorAll(".vaccine-item .help-icon").forEach((btn) => {
+        btn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          const item = btn.closest(".vaccine-item");
+          const name = item?.dataset.vaccine || "";
+          window.location.href = VaccineDetail.buildDetailUrl(name, "index.html");
+        });
+        btn.addEventListener("touchstart", (e) => e.stopPropagation(), { passive: true });
+      });
+    }
+
+    function initDoseClicks() {
+      if (initDoseClicks._bound) return;
+      initDoseClicks._bound = true;
+      document.getElementById("vaccineList").addEventListener("click", (e) => {
+        const btn = e.target.closest(".dose-circle.future");
+        if (!btn) return;
+        VaccineBookingTime.open({
+          vaccine: btn.dataset.vaccine || "",
+          dose: btn.dataset.dose || ""
+        });
+      });
+    }
+
+    function openClinicModalFromParams(params) {
+      VaccineBookingClinic.open({
+        vaccine: params.get("vaccine") || "",
+        dose: params.get("dose") || "",
+        date: params.get("date") || "",
+        clinic: params.get("clinic") || VaccineBookingClinic.DEFAULT_CLINIC
+      });
+    }
+
+    function openClinicSelectFromParams(params) {
+      VaccineBookingClinicSelect.open({
+        vaccine: params.get("vaccine") || "",
+        dose: params.get("dose") || "",
+        date: params.get("date") || "",
+        clinic: params.get("clinic") || VaccineBookingClinic.DEFAULT_CLINIC
+      });
+    }
+
+    function openConfirmModalFromParams(params) {
+      VaccineBookingConfirm.open({
+        vaccine: params.get("vaccine") || "",
+        dose: params.get("dose") || "",
+        date: params.get("date") || "",
+        clinic: params.get("clinic") || VaccineBookingClinic.DEFAULT_CLINIC,
+        remark: params.get("remark") || VaccineBookingConfirm.DEFAULT_REMARK
+      });
+    }
+
+    function getNextAppointmentContext() {
+      const booked = findNextBookedAppointment(getAllVaccinesRaw());
+      if (!booked) return null;
+      const info = BabyProfile.getBookedDose(booked.vaccineName, booked.doseNum) || {};
+      return {
+        vaccine: booked.vaccineName,
+        dose: booked.doseNum,
+        date: info.date || "",
+        clinic: info.clinic || VaccineEditPlan.DEFAULT_CLINIC,
+        remark: info.remark || VaccineEditPlan.DEFAULT_REMARK
+      };
+    }
+
+    function removeBookedDose(vaccine, dose) {
+      if (!vaccine || !dose) return;
+      const id = BabyProfile.getActiveChildId();
+      const data = BabyProfile.getChildData(id);
+      const booked = Object.assign({}, data.bookedDoses || {});
+      if (booked[vaccine]) {
+        delete booked[vaccine][String(dose)];
+        if (!Object.keys(booked[vaccine]).length) {
+          delete booked[vaccine];
+        }
+      }
+      BabyProfile.setChildData(id, { bookedDoses: booked });
+    }
+
+    function openEditPlanFromParams(params) {
+      VaccineEditPlan.open({
+        vaccine: params.get("vaccine") || "",
+        dose: params.get("dose") || "",
+        date: params.get("date") || "",
+        clinic: params.get("clinic") || VaccineEditPlan.DEFAULT_CLINIC,
+        remark: params.get("note") || params.get("remark") || VaccineEditPlan.DEFAULT_REMARK
+      });
+    }
+
+    function initHideConfirmModal() {
+      VaccineHideConfirm.mount({
+        rootEl: document.getElementById("hideConfirmFlow"),
+        onClose: () => {},
+        onConfirm: ({ vaccine }) => {
+          if (vaccine && !PINNED_VACCINES.has(vaccine)) {
+            const hidden = BabyProfile.getHiddenVaccines();
+            if (!hidden.includes(vaccine)) {
+              hidden.push(vaccine);
+              BabyProfile.setHiddenVaccines(hidden);
+            }
+          }
+          VaccineHideConfirm.close();
+          refreshPageUI(SystemTime.getNow(), { resetReveal: true });
+        }
+      });
+
+      const params = new URLSearchParams(window.location.search);
+      if (params.get("openHideConfirm") === "1") {
+        VaccineHideConfirm.open({ vaccine: params.get("vaccine") || "" });
+        params.delete("openHideConfirm");
+        params.delete("vaccine");
+        const clean = params.toString();
+        history.replaceState(null, "", clean ? `index.html?${clean}` : "index.html");
+      }
+    }
+
+    function initEditPlanModal() {
+      VaccineEditPlan.mount({
+        rootEl: document.getElementById("editPlanFlow"),
+        getAppointment: getNextAppointmentContext,
+        onClose: () => {},
+        onDelete: ({ vaccine, dose }) => {
+          removeBookedDose(vaccine, dose);
+          VaccineEditPlan.close();
+          refreshPageUI(SystemTime.getNow(), { resetReveal: true });
+        },
+        onComplete: () => {
+          VaccineEditPlan.close();
+          refreshPageUI(SystemTime.getNow(), { resetReveal: true });
+        },
+        onEditTime: ({ vaccine, dose }) => {
+          VaccineEditPlan.close();
+          VaccineBookingTime.open({ vaccine, dose });
+        },
+        onEditClinic: (ctx) => {
+          VaccineEditPlan.close();
+          VaccineBookingClinic.open(ctx);
+        }
+      });
+
+      const params = new URLSearchParams(window.location.search);
+      if (params.get("openEditPlan") === "1") {
+        const hasParams = params.get("vaccine") && params.get("dose");
+        if (hasParams) {
+          openEditPlanFromParams(params);
+        } else {
+          VaccineEditPlan.open();
+        }
+        params.delete("openEditPlan");
+        const clean = params.toString();
+        history.replaceState(null, "", clean ? `index.html?${clean}` : "index.html");
+      }
+    }
+
+    function initRemarkModal() {
+      VaccineBookingRemark.mount({
+        rootEl: document.getElementById("remarkFlow")
+      });
+    }
+
+    function initBookingModal() {
+      VaccineBookingTime.mount({
+        rootEl: document.getElementById("bookingFlow"),
+        onNext: ({ vaccine, dose, date }) => {
+          VaccineBookingTime.close();
+          VaccineBookingClinic.open({
+            vaccine,
+            dose,
+            date,
+            clinic: VaccineBookingClinic.DEFAULT_CLINIC
+          });
+        },
+        onClose: () => {}
+      });
+
+      VaccineBookingClinic.mount({
+        rootEl: document.getElementById("clinicFlow"),
+        onSelectClinic: (ctx) => {
+          VaccineBookingClinic.close();
+          VaccineBookingClinicSelect.open(ctx);
+        },
+        onNext: ({ vaccine, dose, date, clinic }) => {
+          VaccineBookingClinic.close();
+          VaccineBookingConfirm.open({
+            vaccine,
+            dose,
+            date,
+            clinic,
+            remark: VaccineBookingConfirm.DEFAULT_REMARK
+          });
+        },
+        onClose: () => {}
+      });
+
+      VaccineBookingClinicSelect.mount({
+        rootEl: document.getElementById("clinicSelectFlow"),
+        onBack: (ctx) => {
+          VaccineBookingClinicSelect.close();
+          VaccineBookingClinic.open(ctx);
+        },
+        onSelect: (ctx) => {
+          VaccineBookingClinicSelect.close();
+          VaccineBookingClinic.open(ctx);
+        },
+        onAddClinic: ({ vaccine, dose, date, clinic }) => {
+          const nextParams = new URLSearchParams({
+            vaccine,
+            dose,
+            date,
+            clinic
+          });
+          window.location.href = `接种单位.html?${nextParams.toString()}`;
+        }
+      });
+
+      VaccineBookingConfirm.mount({
+        rootEl: document.getElementById("confirmFlow"),
+        onConfirm: ({ vaccine, dose, date, clinic, remark }) => {
+          if (vaccine && dose) {
+            BabyProfile.setBookedDose(vaccine, dose, {
+              date,
+              clinic,
+              remark
+            });
+          }
+          VaccineBookingConfirm.close();
+          refreshPageUI(SystemTime.getNow(), { resetReveal: true });
+        },
+        onClose: () => {}
+      });
+
+      const params = new URLSearchParams(window.location.search);
+      if (params.get("openConfirm") === "1") {
+        openConfirmModalFromParams(params);
+        params.delete("openConfirm");
+        const clean = params.toString();
+        history.replaceState(null, "", clean ? `index.html?${clean}` : "index.html");
+      } else if (params.get("openClinicSelect") === "1") {
+        openClinicSelectFromParams(params);
+        params.delete("openClinicSelect");
+        const clean = params.toString();
+        history.replaceState(null, "", clean ? `index.html?${clean}` : "index.html");
+      } else if (params.get("openClinic") === "1") {
+        openClinicModalFromParams(params);
+        params.delete("openClinic");
+        const clean = params.toString();
+        history.replaceState(null, "", clean ? `index.html?${clean}` : "index.html");
+      } else if (params.get("openBooking") === "1") {
+        VaccineBookingTime.open({
+          vaccine: params.get("vaccine") || "",
+          dose: params.get("dose") || ""
+        });
+        params.delete("openBooking");
+        const clean = params.toString();
+        history.replaceState(null, "", clean ? `index.html?${clean}` : "index.html");
+      }
+    }
+
+    function initNav() {
+      document.querySelectorAll(".nav-item").forEach((item) => {
+        item.addEventListener("click", () => {
+          const id = item.dataset.nav;
+          if (NAV_ROUTES[id] && id !== "appointment") {
+            window.location.href = NAV_ROUTES[id];
+          }
+        });
+      });
+    }
+
+    document.getElementById("editPlanBtn").addEventListener("click", () => {
+      if (!VaccineEditPlan.open()) {
+        alert("暂无待修改的预约");
+      }
+    });
+
+    document.getElementById("calendarBtn").addEventListener("click", () => {
+      window.location.href = "疫苗日历.html";
+    });
+
+    document.getElementById("addVaccineBtn").addEventListener("click", () => {
+      window.location.href = "疫苗添加.html";
+    });
+
+    function applyHiddenVaccines() {
+      const params = new URLSearchParams(window.location.search);
+      const fromUrl = params.get("hidden");
+      const prev = BabyProfile.getHiddenVaccines();
+      let cleaned = prev.filter((name) => !PINNED_VACCINES.has(name));
+      if (fromUrl && !cleaned.includes(fromUrl) && !PINNED_VACCINES.has(fromUrl)) {
+        cleaned = cleaned.concat(fromUrl);
+      }
+      const changed =
+        cleaned.length !== prev.length ||
+        cleaned.some(function (name, index) {
+          return name !== prev[index];
+        });
+      if (changed) {
+        BabyProfile.setHiddenVaccines(cleaned);
+      }
+
+      const hiddenSet = new Set(cleaned);
+      hiddenSet.forEach((name) => {
+        const item = document.querySelector(`.vaccine-item[data-vaccine="${name}"]`);
+        if (item) item.classList.add("is-hidden");
+      });
+    }
+
+    BabyProfile.mountSwitcher("#profileSwitcher");
+    BabyProfile.subscribe((event) => {
+      if (event.type === "child" || event.type === "data") {
+        refreshPageUI(SystemTime.getNow(), { resetReveal: true });
+      }
+    });
+
+    initTimeSync();
+    initNav();
+    initRemarkModal();
+    initBookingModal();
+    initEditPlanModal();
+    initHideConfirmModal();
+    refreshPageUI(SystemTime.getNow(), { resetReveal: true });
+
+    window.addEventListener("pageshow", function () {
+      resetCompletedRevealView();
+    });
+  </script>
+  <script src="js/bottom-nav.js"></script>
+  <script src="js/section-fade-in.js"></script>
+</body>
+</html>

@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <link rel="stylesheet" href="css/bottom-nav.css" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>接种时间表</title>
+  <style>
+    :root {
+      --bg-page: #fefefe;
+      --pink-accent: #ec7b75;
+      --pink-muted: #e8c0b7;
+      --pink-muted-alt: #e8bfb7;
+      --pink-nav: #fee0d8;
+      --text-dark: #3c3c3c;
+      --grid-line: #d5cbbf;
+      --age-col-bg: rgba(244, 241, 236, 0.6);
+      --vax-col-band-bg: rgba(244, 241, 236, 0.6);
+      --row-highlight-age: #ffe9e9;
+      --row-highlight-vax: #fff0f0;
+      --pill-w: 114px;
+      --pill-h: 42px;
+      --pill-radius: 15px;
+      --age-col-w: 80px;
+      --phone-w: 440px;
+      --phone-h: 894px;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #e8e4e2;
+      font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+      padding: 24px 12px;
+    }
+
+    .phone {
+      width: var(--phone-w);
+      height: var(--phone-h);
+      max-width: 100%;
+      max-height: calc(100vh - 48px);
+      background: var(--bg-page);
+      border-radius: 48px;
+      overflow: hidden;
+      position: relative;
+      box-shadow: 0 24px 80px rgba(0, 0, 0, 0.18);
+      display: flex;
+      flex-direction: column;
+    }
+    .profile-row {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 20px 6px;
+      flex-shrink: 0;
+    }
+
+    .table-header {
+      display: grid;
+      grid-template-columns: var(--age-col-w) 1fr;
+      height: 38px;
+      align-items: flex-end;
+      padding: 0 0 8px;
+      border-bottom: 1px solid var(--grid-line);
+      flex-shrink: 0;
+      background: #fff;
+    }
+
+    .table-header .age-label {
+      font-size: 16px;
+      line-height: 22px;
+      color: var(--text-dark);
+      padding-left: 22px;
+    }
+
+    .table-header .vax-label {
+      font-size: 16px;
+      line-height: 22px;
+      color: var(--text-dark);
+      padding-left: 149px;
+    }
+
+    .table-scroll {
+      flex: 1;
+      overflow-y: scroll;
+      overflow-x: hidden;
+      -webkit-overflow-scrolling: touch;
+      touch-action: pan-y;
+      scrollbar-width: none;
+      overscroll-behavior-y: auto;
+      padding-bottom: 118px;
+      position: relative;
+      min-height: 0;
+    }
+
+    .table-scroll::-webkit-scrollbar { display: none; }
+
+    .momentum-scroll-inner {
+      will-change: transform;
+    }
+
+    .vax-col-band {
+      position: absolute;
+      left: 200px;
+      top: 0;
+      bottom: 0;
+      width: 120px;
+      background: var(--vax-col-band-bg);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .schedule-table-wrap {
+      position: relative;
+      min-height: 100%;
+    }
+
+    .schedule-rows {
+      position: relative;
+      z-index: 1;
+    }
+
+    .schedule-row {
+      display: grid;
+      grid-template-columns: var(--age-col-w) 1fr;
+      border-bottom: 1px solid var(--grid-line);
+    }
+
+    .schedule-row.highlight .age-cell {
+      background: var(--row-highlight-age);
+    }
+
+    .schedule-row.highlight .vax-grid {
+      background: var(--row-highlight-vax);
+    }
+
+    .age-cell {
+      background: var(--age-col-bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 6px;
+      font-size: 14px;
+      color: var(--text-dark);
+      text-align: center;
+      line-height: 20px;
+    }
+
+    .vax-grid {
+      display: grid;
+      grid-template-columns: var(--pill-w) var(--pill-w) var(--pill-w);
+      column-gap: 6px;
+      row-gap: 0;
+      padding: 0 7px 0 3px;
+      grid-auto-rows: var(--pill-h);
+      align-content: start;
+    }
+
+    .vax-pill {
+      width: var(--pill-w);
+      height: var(--pill-h);
+      border-radius: var(--pill-radius);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      color: var(--text-dark);
+      text-align: center;
+      padding: 0 8px;
+      line-height: 1.2;
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+      z-index: 1;
+    }
+
+    .vax-pill.done::after {
+      content: "";
+      position: absolute;
+      left: 6px;
+      right: 6px;
+      top: 50%;
+      height: 2px;
+      background: #fff;
+      transform: translateY(-50%);
+      border-radius: 1px;
+      pointer-events: none;
+    }
+
+    .vax-pill.dashed {
+      background: #fff;
+      border: 2px dashed #ccc;
+    }
+
+    .vax-pill.pink { background: #ffb7b2; }
+    .vax-pill.yellow { background: #f8e9a1; }
+    .vax-pill.mint { background: #b5ead7; }
+    .vax-pill.peach { background: #fbe7c6; }
+    .vax-pill.light-pink { background: #fde2e4; }
+    .vax-pill.cyan { background: #d4f0f0; }
+    .vax-pill.blue { background: #a0e7e5; }
+    .vax-pill.purple { background: #dcd6f7; }
+    .vax-pill.light-green { background: #e2f0cb; }
+
+    .list-fade {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 102px;
+      height: 55px;
+      background: linear-gradient(180deg, rgba(241, 241, 241, 0) 29.861%, rgba(149, 149, 149, 0.1) 100%);
+      pointer-events: none;
+      z-index: 5;
+    }
+
+    .bottom-nav {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 102px;
+      background: var(--pink-nav);
+      backdrop-filter: blur(11.45px);
+      display: flex;
+      justify-content: space-between;
+      padding: 16px 30px 34px;
+      z-index: 10;
+    }
+
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 50px;
+      border: none;
+      background: none;
+      font-family: inherit;
+      cursor: pointer;
+      padding: 0;
+    }
+
+    .nav-item .nav-label {
+      font-size: 10px;
+      color: var(--pink-muted);
+      white-space: nowrap;
+      line-height: normal;
+    }
+
+    .nav-item[data-nav="appointment"] .nav-label {
+      color: var(--pink-muted-alt);
+    }
+
+    .nav-item.active .nav-label { color: var(--pink-accent); }
+
+    @media (max-width: 480px) {
+      body { padding: 0; }
+      .phone {
+        width: 100vw;
+        height: 100vh;
+        max-height: 100vh;
+        border-radius: 0;
+        box-shadow: none;
+      }
+    }
+  </style>
+  <script src="js/load-baby-profile-css.js"></script>
+</head>
+<body>
+  <div class="phone">
+    <div class="profile-row" id="profileSwitcher"></div>
+
+    <div class="table-header">
+      <span class="age-label">年龄</span>
+      <span class="vax-label">疫苗种类</span>
+    </div>
+
+    <div class="table-scroll" id="scheduleScroll">
+      <div class="schedule-table-wrap">
+        <div class="vax-col-band" aria-hidden="true"></div>
+        <div class="schedule-rows" id="scheduleBody"></div>
+      </div>
+    </div>
+    <div class="list-fade"></div>
+
+        <nav class="bottom-nav" aria-label="主导航">
+      <button class="nav-item" data-nav="appointment" type="button"><span class="nav-icon"><img src="" alt="" /></span><span class="nav-label">预约</span></button>
+      <button class="nav-item active" data-nav="schedule" type="button"><span class="nav-icon"><img src="" alt="" /></span><span class="nav-label">接种时间表</span></button>
+      <button class="nav-item" data-nav="growth" type="button"><span class="nav-icon"><img src="" alt="" /></span><span class="nav-label">成长曲线</span></button>
+      <button class="nav-item" data-nav="profile" type="button"><span class="nav-icon"><img src="" alt="" /></span><span class="nav-label">我的</span></button>
+    </nav>
+  </div>
+
+  <script src="js/system-time.js"></script>
+  <script src="js/baby-profile.js"></script>
+  <script src="js/vaccine-schedule.js"></script>
+  <script src="js/vaccine-detail.js"></script>
+  <script src="js/momentum-scroll.js"></script>
+  <script>
+    const scheduleData = VaccineSchedule.SCHEDULE_ROWS;
+
+    const NAV_ROUTES = {
+      appointment: "index.html",
+      schedule: "接种时间表.html",
+      growth: "成长曲线.html",
+      profile: "我的.html"
+    };
+
+    function renderPill(v) {
+      const classes = ["vax-pill"];
+      if (v.dashed) classes.push("dashed");
+      else classes.push(v.color || "peach");
+      if (v.done) classes.push("done");
+
+      const styles = [];
+      if (v.col != null) styles.push(`grid-column:${v.col + 1}`);
+      if (v.row != null) styles.push(`grid-row:${v.row + 1}`);
+      const styleAttr = styles.length ? ` style="${styles.join(";")}"` : "";
+
+      return `<div class="${classes.join(" ")}"${styleAttr} data-vaccine="${v.name}" role="button" tabindex="0">${v.name}</div>`;
+    }
+
+    function pillWithDoneState(pill) {
+      const now = SystemTime.getNow();
+      const done = VaccineSchedule.isSchedulePillDone(pill.name, now);
+      return Object.assign({}, pill, { done: !!done });
+    }
+
+    function renderSchedule() {
+      const highlightAge = BabyProfile.getScheduleHighlightAge(
+        scheduleData,
+        SystemTime.getNow()
+      );
+      const body = document.getElementById("scheduleBody");
+      body.innerHTML = scheduleData.map((row) => `
+        <div class="schedule-row${row.age === highlightAge ? " highlight" : ""}" style="min-height:${row.height}px">
+          <div class="age-cell">${row.age}</div>
+          <div class="vax-grid">
+            ${row.vaccines.map(function (v) { return renderPill(pillWithDoneState(v)); }).join("")}
+          </div>
+        </div>
+      `).join("");
+      initPillClicks();
+    }
+
+    function initPillClicks() {
+      document.querySelectorAll(".vax-pill").forEach(function (pill) {
+        function handleClick() {
+          const name = pill.dataset.vaccine || "";
+          window.location.href = VaccineDetail.buildDetailUrl(name, "接种时间表.html");
+        }
+        pill.addEventListener("click", handleClick);
+        pill.addEventListener("keydown", function (e) {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            handleClick();
+          }
+        });
+      });
+    }
+
+    function initNav() {
+      document.querySelectorAll(".nav-item").forEach((item) => {
+        item.addEventListener("click", () => {
+          const id = item.dataset.nav;
+          if (NAV_ROUTES[id] && id !== "schedule") {
+            window.location.href = NAV_ROUTES[id];
+          }
+        });
+      });
+    }
+
+    renderSchedule();
+    BabyProfile.mountSwitcher("#profileSwitcher");
+    BabyProfile.subscribe(function (event) {
+      if (event.type === "child" || event.type === "data") {
+        renderSchedule();
+      }
+    });
+    let lastScheduleMinute = -1;
+    SystemTime.subscribe(function (now) {
+      const minuteKey = now.getHours() * 60 + now.getMinutes();
+      if (minuteKey === lastScheduleMinute) return;
+      lastScheduleMinute = minuteKey;
+      renderSchedule();
+    });
+    initNav();
+
+    /* 与首页相同的列表惯性 / 越界回弹（参数见 js/momentum-scroll.js → WECHAT_PRESET） */
+    (function initScheduleMomentumScroll() {
+      var scrollEl = document.getElementById("scheduleScroll");
+      if (!window.MomentumScroll || !scrollEl) return;
+      MomentumScroll.attach(scrollEl, MomentumScroll.WECHAT_PRESET);
+    })();
+  </script>
+  <script src="js/bottom-nav.js"></script>
+  <script src="js/section-fade-in.js"></script>
+</body>
+</html>

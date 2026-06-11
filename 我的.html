@@ -1,0 +1,966 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <link rel="stylesheet" href="css/bottom-nav.css" />
+  <link rel="stylesheet" href="css/reminder-date-modal.css" />
+  <link rel="stylesheet" href="css/reminder-time-modal.css" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>我的</title>
+  <style>
+    :root {
+      --bg-page: #f7f2ef;
+      --pink-header-from: #fd898a;
+      --pink-header-to: #fd9999;
+      --pink-accent: #ec7b75;
+      --pink-muted: #e8c0b7;
+      --pink-nav: #fee0d8;
+      --text-dark: #464646;
+      --green: #4d8266;
+      --green-text: #4a6250;
+      --highlight: #fffbe8;
+      --highlight-text: #ffa728;
+      --phone-w: 440px;
+      --phone-h: 894px;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #e8e4e2;
+      font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+      padding: 24px 12px;
+    }
+
+    .phone {
+      width: var(--phone-w);
+      height: var(--phone-h);
+      max-width: 100%;
+      max-height: calc(100vh - 48px);
+      background: var(--bg-page);
+      border-radius: 48px;
+      overflow: hidden;
+      position: relative;
+      box-shadow: 0 24px 80px rgba(0, 0, 0, 0.18);
+      display: flex;
+      flex-direction: column;
+    }
+    .profile-top {
+      flex-shrink: 0;
+      height: 123px;
+      background: linear-gradient(180deg, var(--pink-header-from) 0%, var(--pink-header-to) 100%);
+      position: relative;
+    }
+    .profile-card {
+      position: relative;
+      z-index: 3;
+      margin: -85px 20px 0;
+      flex-shrink: 0;
+      border-radius: 34px;
+      background: linear-gradient(180deg, rgba(255, 240, 235, 0.15) 50%, rgba(233, 221, 217, 0.3) 100%);
+      backdrop-filter: blur(32.5px);
+      -webkit-backdrop-filter: blur(32.5px);
+      border: 0.8px solid rgba(255, 255, 255, 0.35);
+      box-shadow: 0 9px 13px rgba(226, 202, 194, 0.3);
+      padding: 16px;
+    }
+
+    .profile-info {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .profile-avatar {
+      width: 80px;
+      height: 80px;
+      border-radius: 42px;
+      overflow: hidden;
+      flex-shrink: 0;
+      position: relative;
+    }
+
+    .profile-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .profile-text .name {
+      font-size: 16px;
+      font-weight: 800;
+      letter-spacing: 0.08px;
+      margin-bottom: 10px;
+    }
+
+    .profile-text .address {
+      font-size: 12px;
+      color: var(--text-dark);
+      letter-spacing: 0.12px;
+      line-height: 16px;
+      margin-bottom: 10px;
+    }
+
+    .edit-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      border: none;
+      background: none;
+      font-family: inherit;
+      font-size: 12px;
+      color: var(--green-text);
+      cursor: pointer;
+      padding: 0;
+    }
+
+    .edit-link img {
+      width: 12px;
+      height: 12px;
+    }
+
+    .scroll-area {
+      flex: 1;
+      overflow-y: auto;
+      overflow-x: hidden;
+      padding: 20px 20px 120px;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+
+    .scroll-area::-webkit-scrollbar { display: none; }
+
+    .section {
+      margin-bottom: 24px;
+    }
+
+    .section-head {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 14px;
+      padding-left: 2px;
+    }
+
+    .section-head img {
+      width: 19px;
+      height: 19px;
+      object-fit: contain;
+      flex-shrink: 0;
+    }
+
+    .section-head .section-icon-clinic {
+      width: 19px;
+      height: 19px;
+    }
+
+    .section-head h2 {
+      font-size: 16px;
+      font-weight: 400;
+      color: var(--text-dark);
+    }
+
+    .card-group {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .card-row {
+      background: #fff;
+      min-height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      font-size: 16px;
+      color: #000;
+    }
+
+    .card-row:first-child { border-radius: 20px 20px 5px 5px; }
+    .card-row:last-child { border-radius: 5px 5px 20px 20px; }
+    .card-row:only-child { border-radius: 20px; }
+    .card-row:first-child:last-child { border-radius: 20px; }
+    .card-row:not(:first-child):not(:last-child) { border-radius: 5px; }
+
+    .card-row.highlight {
+      background: var(--highlight);
+      color: var(--highlight-text);
+    }
+
+    .card-row.reminder-custom-row.highlight {
+      background: var(--highlight);
+      color: var(--highlight-text);
+    }
+
+    .card-row.reminder-custom-row.highlight .row-right {
+      color: var(--highlight-text);
+    }
+
+    .card-row.clinic-main {
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: center;
+      min-height: 68px;
+      padding: 12px 16px;
+      gap: 4px;
+    }
+
+    .card-row.clinic-main .clinic-name {
+      font-size: 16px;
+      line-height: 1.3;
+    }
+
+    .card-row.clinic-main .clinic-addr {
+      font-size: 14px;
+      color: #000;
+    }
+
+    .clinic-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      width: 100%;
+      gap: 8px;
+    }
+
+    .badge-default {
+      flex-shrink: 0;
+      background: #e0ebd8;
+      color: #464646;
+      font-size: 10px;
+      padding: 2px 10px;
+      border-radius: 32px;
+      height: 18px;
+      line-height: 14px;
+      margin-top: 8px;
+    }
+
+    .card-row.add-row {
+      justify-content: center;
+      padding: 4px 16px;
+      width: 100%;
+      border: none;
+      background: #fff;
+      font-family: inherit;
+      cursor: pointer;
+    }
+
+    .card-row.child-row {
+      width: 100%;
+      border: none;
+      font-family: inherit;
+      font-size: 16px;
+      color: #000;
+      cursor: pointer;
+      text-align: left;
+    }
+
+    .card-row.reminder-time-row {
+      width: 100%;
+      border: none;
+      background: #fff;
+      font-family: inherit;
+      font-size: 16px;
+      color: #000;
+      cursor: pointer;
+      text-align: left;
+    }
+
+    .card-row.reminder-custom-row {
+      width: 100%;
+      border: none;
+      background: #fff;
+      font-family: inherit;
+      font-size: 16px;
+      color: #000;
+      cursor: pointer;
+      text-align: left;
+    }
+
+    .card-row .mode-check {
+      display: none;
+      width: 17px;
+      height: 17px;
+      flex-shrink: 0;
+      object-fit: contain;
+    }
+
+    .card-row.highlight .mode-check {
+      display: block;
+    }
+
+    .card-row[data-reminder-mode] {
+      height: 40px;
+      min-height: 40px;
+      padding: 0 16px;
+    }
+
+    .card-row[data-reminder-mode] > span {
+      font-size: 16px;
+      line-height: 1;
+    }
+
+    .card-row.highlight[data-reminder-mode] > span {
+      color: var(--highlight-text);
+    }
+
+    #customReminderValue:empty {
+      display: none;
+    }
+
+    .card-row.add-row img {
+      width: 32px;
+      height: 32px;
+    }
+
+    .row-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #000;
+      font-size: 16px;
+    }
+
+    .row-right img {
+      width: 17px;
+      height: 17px;
+    }
+
+    .toggle {
+      width: 42px;
+      height: 22px;
+      border-radius: 9px;
+      background: var(--green);
+      position: relative;
+      border: none;
+      cursor: pointer;
+      flex-shrink: 0;
+      overflow: hidden;
+    }
+
+    .toggle::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 22px;
+      height: 22px;
+      border-radius: 11px;
+      background: rgba(216, 226, 207, 0.1) url("images/profile-toggle-bell.svg") center / 10px 11px no-repeat;
+      transition: left 0.2s ease;
+    }
+
+    .toggle[aria-pressed="false"] {
+      background: #c8c8c8;
+    }
+
+    .toggle[aria-pressed="false"]::after {
+      left: 20px;
+      background-color: rgba(216, 226, 207, 0.1);
+    }
+
+    .list-fade {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 102px;
+      height: 64px;
+      background: linear-gradient(180deg, transparent 0%, rgba(105, 104, 103, 0.1) 100%);
+      pointer-events: none;
+      z-index: 5;
+    }
+
+    .bottom-nav {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 102px;
+      background: var(--pink-nav);
+      backdrop-filter: blur(11.45px);
+      display: flex;
+      justify-content: space-between;
+      padding: 16px 30px 34px;
+      z-index: 10;
+    }
+
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 50px;
+      border: none;
+      background: none;
+      font-family: inherit;
+      cursor: pointer;
+      padding: 0;
+    }
+
+    .nav-item .nav-label {
+      font-size: 10px;
+      color: var(--pink-muted);
+      white-space: nowrap;
+    }
+
+    .nav-item.active .nav-label { color: var(--pink-accent); }
+
+
+    /* 添加共享成员弹窗（Figma 1-4100） */
+    .share-member-flow {
+      position: absolute;
+      inset: 0;
+      z-index: 18;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      pointer-events: none;
+    }
+
+    .share-member-flow.is-open {
+      pointer-events: auto;
+    }
+
+    .share-member-flow[hidden] {
+      display: none !important;
+    }
+
+    .share-member-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.3);
+    }
+
+    .share-member-stack {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 400px;
+    }
+
+    .share-member-card {
+      background: rgba(255, 255, 255, 0.98);
+      backdrop-filter: blur(12.5px);
+      -webkit-backdrop-filter: blur(12.5px);
+      border-radius: 15px;
+      padding: 46px 24px 32px;
+      min-height: 397px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .share-member-title {
+      font-size: 22px;
+      color: #000;
+      text-align: center;
+      margin-bottom: 16px;
+      line-height: 1.2;
+    }
+
+    .share-member-tag {
+      border: 0.5px solid #ccc;
+      border-radius: 3px;
+      padding: 0 12px;
+      height: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+
+    .share-member-tag span {
+      font-size: 10px;
+      color: #000;
+      letter-spacing: 0.35px;
+      text-transform: uppercase;
+      line-height: 20px;
+      white-space: nowrap;
+    }
+
+    .share-member-desc {
+      width: 100%;
+      font-size: 14px;
+      color: #000;
+      line-height: 20px;
+      letter-spacing: 0.35px;
+      margin-bottom: auto;
+      padding: 0 16px;
+    }
+
+    .share-member-actions {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      padding-top: 24px;
+    }
+
+    .share-member-actions button {
+      width: 100%;
+      height: 44px;
+      border-radius: 32px;
+      font-family: inherit;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      line-height: 28px;
+    }
+
+    .share-member-actions button:active {
+      opacity: 0.85;
+    }
+
+    .share-member-btn-outline {
+      background: #fff;
+      border: 1px solid #fd898a;
+      color: #fd898a;
+    }
+
+    .share-member-btn-primary {
+      background: #fd898a;
+      border: none;
+      color: #fff;
+    }
+
+    @media (max-width: 480px) {
+      body { padding: 0; }
+      .phone {
+        width: 100vw;
+        height: 100vh;
+        max-height: 100vh;
+        border-radius: 0;
+        box-shadow: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="phone">
+    <div class="profile-top">
+    </div>
+
+    <div class="profile-card">
+      <div class="profile-info">
+        <div class="profile-avatar">
+          <img id="profileAvatar" src="images/profile-avatar-mom.png" alt="" />
+        </div>
+        <div class="profile-text">
+          <p class="name" id="profileName">妈妈小丽</p>
+          <p class="address" id="profileAddress">翻斗大街翻斗花园二号楼1001室</p>
+          <button class="edit-link" type="button" id="editProfileBtn">
+            <img src="images/profile-icon-edit.svg" alt="" aria-hidden="true" />
+            修改个人信息
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="scroll-area">
+      <!-- 孩子信息 -->
+      <section class="section fade-in">
+        <div class="section-head">
+          <img src="images/profile-icon-baby.svg" alt="" aria-hidden="true" />
+          <h2>孩子信息</h2>
+        </div>
+        <div class="card-group" id="childrenList">
+          <div class="card-row">宝宝1</div>
+          <div class="card-row">宝宝2</div>
+          <button class="card-row add-row" type="button" id="addChildBtn" aria-label="添加孩子">
+            <img src="images/profile-icon-plus.svg" alt="" aria-hidden="true" />
+          </button>
+        </div>
+      </section>
+
+      <!-- 诊所 -->
+      <section class="section fade-in">
+        <div class="section-head">
+          <img class="section-icon-clinic" src="images/zhensuo.png" alt="" aria-hidden="true" />
+          <h2>诊所</h2>
+        </div>
+        <div class="card-group">
+          <div class="card-row clinic-main">
+            <div class="clinic-top">
+              <p class="clinic-name">大连市中医医院门诊部(高尔基路门诊)</p>
+              <span class="badge-default">默认</span>
+            </div>
+            <p class="clinic-addr">西岗区高尔基路188-194号</p>
+          </div>
+          <button class="card-row add-row" type="button" id="addClinicBtn" aria-label="添加诊所">
+            <img src="images/profile-icon-plus.svg" alt="" aria-hidden="true" />
+          </button>
+        </div>
+      </section>
+
+      <!-- 提醒 -->
+      <section class="section fade-in">
+        <div class="section-head">
+          <img src="images/profile-icon-bell.svg" alt="" aria-hidden="true" />
+          <h2>提醒</h2>
+        </div>
+        <div class="card-group">
+          <div class="card-row">
+            <span>闹钟提醒</span>
+            <button class="toggle" type="button" id="alarmToggle" aria-label="闹钟提醒" aria-pressed="true"></button>
+          </div>
+          <button class="card-row reminder-time-row" type="button" id="reminderTimeBtn">
+            <span>提醒时间</span>
+            <span class="row-right">
+              <span id="reminderTimeValue">上午10:00</span>
+              <img src="images/profile-icon-caret-right.svg" alt="" aria-hidden="true" />
+            </span>
+          </button>
+          <div class="card-row highlight" data-reminder-mode="same-day">
+            <span>预定当天</span>
+            <img class="mode-check" src="images/profile-icon-check.svg" alt="" aria-hidden="true" />
+          </div>
+          <div class="card-row" data-reminder-mode="one-day">
+            <span>提前一天</span>
+            <img class="mode-check" src="images/profile-icon-check.svg" alt="" aria-hidden="true" />
+          </div>
+          <div class="card-row" data-reminder-mode="two-days">
+            <span>提前两天</span>
+            <img class="mode-check" src="images/profile-icon-check.svg" alt="" aria-hidden="true" />
+          </div>
+          <button class="card-row reminder-custom-row" type="button" id="customReminderBtn">
+            <span>自定义</span>
+            <span class="row-right">
+              <span id="customReminderValue"></span>
+              <img src="images/profile-icon-caret-right.svg" alt="" aria-hidden="true" />
+            </span>
+          </button>
+        </div>
+      </section>
+
+      <!-- 共享 -->
+      <section class="section fade-in">
+        <div class="section-head">
+          <img src="images/profile-icon-users.svg" alt="" aria-hidden="true" />
+          <h2>共享</h2>
+        </div>
+        <div class="card-group" id="shareList">
+          <div class="card-row">爸爸</div>
+          <div class="card-row">爷爷</div>
+          <button class="card-row add-row" type="button" id="addShareBtn" aria-label="添加共享成员">
+            <img src="images/profile-icon-plus.svg" alt="" aria-hidden="true" />
+          </button>
+        </div>
+      </section>
+    </div>
+
+    <div class="list-fade"></div>
+
+    <!-- 提醒日期弹窗 — Figma 1-3945 -->
+    <div class="reminder-date-flow" id="reminderDateFlow" hidden aria-hidden="true">
+      <div class="reminder-date-overlay" id="reminderDateContentOverlay"></div>
+      <div class="reminder-date-stack" role="dialog" aria-labelledby="reminderDateTitle" aria-modal="true">
+        <div class="reminder-date-card">
+          <div class="reminder-date-header">
+            <h2 class="reminder-date-title" id="reminderDateTitle">提醒日期</h2>
+            <div class="reminder-date-badge">
+              <span id="reminderDatePreviewDays">提前10天</span>
+            </div>
+          </div>
+
+          <div class="reminder-date-wheel-wrap">
+            <div class="reminder-date-picker">
+              <div class="reminder-date-column">
+                <div class="reminder-date-column__frame" aria-hidden="true"></div>
+                <div class="reminder-date-wheel-col" id="reminderDateDayCol"></div>
+                <span class="reminder-date-column__unit">天</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="reminder-date-actions">
+            <button class="reminder-date-btn-cancel" type="button" id="reminderDateBtnCancel">取消</button>
+            <button class="reminder-date-btn-confirm" type="button" id="reminderDateBtnConfirm">添加</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 提醒时间弹窗 — Figma 1-3780 -->
+    <div class="reminder-time-flow" id="reminderTimeFlow" hidden aria-hidden="true">
+      <div class="reminder-time-overlay" id="reminderTimeContentOverlay"></div>
+      <div class="reminder-time-stack" role="dialog" aria-labelledby="reminderTimeTitle" aria-modal="true">
+        <div class="reminder-time-card">
+          <div class="reminder-time-header">
+            <h2 class="reminder-time-title" id="reminderTimeTitle">提醒时间</h2>
+            <div class="reminder-time-badge">
+              <span id="reminderTimePreviewTime">上午 10:00</span>
+            </div>
+          </div>
+
+          <div class="reminder-time-wheel-wrap">
+            <div class="reminder-time-picker">
+              <div class="reminder-time-column reminder-time-column--period">
+                <div class="reminder-time-column__frame" aria-hidden="true"></div>
+                <div class="reminder-time-wheel-col" id="reminderTimePeriodCol"></div>
+              </div>
+              <div class="reminder-time-column reminder-time-column--hour">
+                <div class="reminder-time-column__frame" aria-hidden="true"></div>
+                <div class="reminder-time-wheel-col" id="reminderTimeHourCol"></div>
+                <span class="reminder-time-column__unit">时</span>
+              </div>
+              <div class="reminder-time-column reminder-time-column--minute">
+                <div class="reminder-time-column__frame" aria-hidden="true"></div>
+                <div class="reminder-time-wheel-col" id="reminderTimeMinuteCol"></div>
+                <span class="reminder-time-column__unit">分</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="reminder-time-actions">
+            <button class="reminder-time-btn-cancel" type="button" id="reminderTimeBtnCancel">取消</button>
+            <button class="reminder-time-btn-confirm" type="button" id="reminderTimeBtnConfirm">确定</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 添加共享成员弹窗（Figma 1-4100） -->
+    <div class="share-member-flow" id="shareMemberFlow" hidden aria-hidden="true">
+      <div class="share-member-overlay" id="shareMemberContentOverlay"></div>
+      <div class="share-member-stack" role="dialog" aria-labelledby="shareMemberTitle" aria-modal="true">
+        <div class="share-member-card">
+          <h2 class="share-member-title" id="shareMemberTitle">添加共享成员</h2>
+          <div class="share-member-tag">
+            <span>添加其他成员共享孩子的疫苗信息</span>
+          </div>
+          <p class="share-member-desc">
+            新成员登录后可同步已有的孩子信息、疫苗预约、预约通知、疫苗记录与成长记录；<br /><br />
+            任意一位共享成员新增或修改的孩子信息、预约计划与成长记录会同步到其他共享成员的APP
+          </p>
+          <div class="share-member-actions">
+            <button class="share-member-btn-outline" type="button" id="shareMemberCopyLinkBtn">复制链接</button>
+            <button class="share-member-btn-primary" type="button" id="shareMemberShareWechatBtn">分享到微信</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+        <nav class="bottom-nav" aria-label="主导航">
+      <button class="nav-item" data-nav="appointment" type="button"><span class="nav-icon"><img src="" alt="" /></span><span class="nav-label">预约</span></button>
+      <button class="nav-item" data-nav="schedule" type="button"><span class="nav-icon"><img src="" alt="" /></span><span class="nav-label">接种时间表</span></button>
+      <button class="nav-item" data-nav="growth" type="button"><span class="nav-icon"><img src="" alt="" /></span><span class="nav-label">成长曲线</span></button>
+      <button class="nav-item active" data-nav="profile" type="button"><span class="nav-icon"><img src="" alt="" /></span><span class="nav-label">我的</span></button>
+    </nav>
+  </div>
+
+  <script src="js/system-time.js"></script>
+  <script src="js/modal-motion.js"></script>
+  <script src="js/reminder-date-modal.js"></script>
+  <script src="js/reminder-time-modal.js"></script>
+  <script src="js/share-member-modal.js"></script>
+  <script>
+    const NAV_ROUTES = {
+      appointment: "index.html",
+      schedule: "接种时间表.html",
+      growth: "成长曲线.html",
+      profile: "我的.html"
+    };
+
+    function initNav() {
+      document.querySelectorAll(".nav-item").forEach((item) => {
+        item.addEventListener("click", () => {
+          const id = item.dataset.nav;
+          if (NAV_ROUTES[id] && id !== "profile") {
+            window.location.href = NAV_ROUTES[id];
+          }
+        });
+      });
+    }
+
+    function applyUserProfile() {
+      const stored = sessionStorage.getItem("userProfile");
+      if (!stored) return;
+      const profile = JSON.parse(stored);
+      if (profile.nickname) {
+        document.getElementById("profileName").textContent = profile.nickname;
+      }
+      if (profile.address) {
+        document.getElementById("profileAddress").textContent = profile.address;
+      }
+      if (profile.avatar) {
+        document.getElementById("profileAvatar").src = profile.avatar;
+      }
+    }
+
+    document.getElementById("editProfileBtn").addEventListener("click", () => {
+      window.location.href = "个人信息.html";
+    });
+
+    document.getElementById("addClinicBtn").addEventListener("click", () => {
+      window.location.href = "添加诊所.html";
+    });
+
+    function loadChildren() {
+      const stored = sessionStorage.getItem("childrenList");
+      if (stored) return JSON.parse(stored);
+      return [{ name: "宝宝1" }, { name: "宝宝2" }];
+    }
+
+    function renderChildren() {
+      const list = loadChildren();
+      const container = document.getElementById("childrenList");
+      const rows = list.map((child, index) =>
+        `<button class="card-row child-row" type="button" data-index="${index}">${child.name}</button>`
+      ).join("");
+      container.innerHTML = `${rows}
+        <button class="card-row add-row" type="button" id="addChildBtn" aria-label="添加孩子">
+          <img src="images/profile-icon-plus.svg" alt="" aria-hidden="true" />
+        </button>`;
+
+      document.getElementById("addChildBtn").addEventListener("click", () => {
+        window.location.href = "孩子信息.html";
+      });
+
+      container.querySelectorAll(".child-row").forEach((row) => {
+        row.addEventListener("click", () => {
+          window.location.href = `孩子信息.html?index=${row.dataset.index}`;
+        });
+      });
+    }
+
+    renderChildren();
+
+    function loadSharedMembers() {
+      const stored = sessionStorage.getItem("sharedMembers");
+      if (stored) return JSON.parse(stored);
+      return ["爸爸", "爷爷"];
+    }
+
+    function renderSharedMembers() {
+      const list = loadSharedMembers();
+      const container = document.getElementById("shareList");
+      const rows = list.map((name) => `<div class="card-row">${name}</div>`).join("");
+      container.innerHTML = `${rows}
+        <button class="card-row add-row" type="button" id="addShareBtn" aria-label="添加共享成员">
+          <img src="images/profile-icon-plus.svg" alt="" aria-hidden="true" />
+        </button>`;
+
+      document.getElementById("addShareBtn").addEventListener("click", () => {
+        ShareMemberModal.open();
+      });
+    }
+
+    function initShareMemberModal() {
+      ShareMemberModal.mount({
+        rootEl: document.getElementById("shareMemberFlow"),
+        onClose: () => {}
+      });
+
+      const params = new URLSearchParams(window.location.search);
+      if (params.get("openShareMember") === "1") {
+        ShareMemberModal.open();
+        params.delete("openShareMember");
+        const clean = params.toString();
+        history.replaceState(null, "", clean ? `我的.html?${clean}` : "我的.html");
+      }
+    }
+
+    renderSharedMembers();
+
+    function applyReminderTime() {
+      const time = ReminderTimeModal.loadReminderTime();
+      const text = `${time.period}${String(time.hour).padStart(2, "0")}:${String(time.minute).padStart(2, "0")}`;
+      document.getElementById("reminderTimeValue").textContent = text;
+    }
+
+    document.getElementById("reminderTimeBtn").addEventListener("click", () => {
+      ReminderTimeModal.open();
+    });
+
+    function initReminderTimeModal() {
+      ReminderTimeModal.mount({
+        rootEl: document.getElementById("reminderTimeFlow"),
+        onClose: () => {},
+        onConfirm: (time) => {
+          sessionStorage.setItem("reminderTime", JSON.stringify(time));
+          ReminderTimeModal.close();
+          applyReminderTime();
+        }
+      });
+
+      const params = new URLSearchParams(window.location.search);
+      if (params.get("openReminderTime") === "1") {
+        ReminderTimeModal.open();
+        params.delete("openReminderTime");
+        const clean = params.toString();
+        history.replaceState(null, "", clean ? `我的.html?${clean}` : "我的.html");
+      }
+    }
+
+    document.getElementById("customReminderBtn").addEventListener("click", () => {
+      ReminderDateModal.open();
+    });
+
+    function initReminderDateModal() {
+      ReminderDateModal.mount({
+        rootEl: document.getElementById("reminderDateFlow"),
+        onClose: () => {},
+        onConfirm: ({ days }) => {
+          sessionStorage.setItem("customReminderDays", String(days));
+          sessionStorage.setItem("reminderMode", "custom");
+          ReminderDateModal.close();
+          applyReminderMode();
+        }
+      });
+
+      const params = new URLSearchParams(window.location.search);
+      if (params.get("openReminderDate") === "1") {
+        ReminderDateModal.open();
+        params.delete("openReminderDate");
+        const clean = params.toString();
+        history.replaceState(null, "", clean ? `我的.html?${clean}` : "我的.html");
+      }
+    }
+
+    document.getElementById("alarmToggle").addEventListener("click", function () {
+      const on = this.getAttribute("aria-pressed") !== "true";
+      this.setAttribute("aria-pressed", on ? "true" : "false");
+    });
+
+    function applyReminderMode() {
+      const mode = sessionStorage.getItem("reminderMode") || "same-day";
+      const customDays = sessionStorage.getItem("customReminderDays");
+
+      document.querySelectorAll("[data-reminder-mode]").forEach((row) => {
+        row.classList.toggle("highlight", row.dataset.reminderMode === mode);
+      });
+
+      const customRow = document.getElementById("customReminderBtn");
+      const customValue = document.getElementById("customReminderValue");
+      if (mode === "custom" && customDays) {
+        customRow.classList.add("highlight");
+        customValue.textContent = `提前${customDays}天`;
+      } else if (customDays) {
+        customValue.textContent = `提前${customDays}天`;
+      } else {
+        customValue.textContent = "";
+      }
+    }
+
+    applyReminderTime();
+    applyReminderMode();
+    applyUserProfile();
+    initNav();
+    initReminderDateModal();
+    initReminderTimeModal();
+    initShareMemberModal();
+  </script>
+  <script src="js/bottom-nav.js"></script>
+  <script src="js/section-fade-in.js"></script>
+</body>
+</html>

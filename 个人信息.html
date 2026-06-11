@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>个人信息</title>
+  <style>
+    :root {
+      --bg-page: #f7f2ef;
+      --header-gradient: linear-gradient(180deg, #fd898a 0%, #fd9999 100%);
+      --text-secondary: #464646;
+      --text-input: #5c5c5c;
+      --btn-dark: #464646;
+      --phone-w: 440px;
+      --phone-h: 894px;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #e8e4e2;
+      font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+      padding: 24px 12px;
+    }
+
+    .phone {
+      width: var(--phone-w);
+      height: var(--phone-h);
+      max-width: 100%;
+      max-height: calc(100vh - 48px);
+      background: var(--bg-page);
+      border-radius: 48px;
+      overflow: hidden;
+      position: relative;
+      box-shadow: 0 24px 80px rgba(0, 0, 0, 0.18);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .header {
+      position: relative;
+      height: 78px;
+      background: var(--header-gradient);
+      flex-shrink: 0;
+    }
+    .back-btn {
+      position: absolute;
+      left: 28px;
+      top: 11px;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: #fff;
+      border: none;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      padding: 0;
+      z-index: 2;
+    }
+
+    .back-btn img {
+      width: 24px;
+      height: 24px;
+      object-fit: contain;
+      display: block;
+    }
+
+    .back-btn:active { opacity: 0.85; }
+
+    .page-title {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 12px;
+      font-size: 20px;
+      color: #000;
+      font-weight: 400;
+      text-align: center;
+      line-height: 28px;
+    }
+
+    .content {
+      flex: 1;
+      overflow-y: auto;
+      padding-bottom: 40px;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+
+    .content::-webkit-scrollbar { display: none; }
+
+    .avatar-section {
+      display: flex;
+      justify-content: center;
+      padding: 16px;
+      margin-top: 0;
+    }
+
+    .avatar-wrap {
+      position: relative;
+      width: 80px;
+      height: 80px;
+    }
+
+    .avatar-wrap .avatar {
+      width: 80px;
+      height: 80px;
+      border-radius: 42px;
+      object-fit: cover;
+      display: block;
+    }
+
+    .avatar-edit {
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      width: 24px;
+      height: 24px;
+      border: none;
+      padding: 0;
+      background: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .avatar-edit img {
+      width: 24px;
+      height: 24px;
+      display: block;
+      object-fit: contain;
+    }
+
+    .form {
+      padding: 0 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .field label {
+      font-size: 16px;
+      color: #000;
+      line-height: 1;
+    }
+
+    .field input,
+    .field textarea {
+      width: 100%;
+      height: 45px;
+      padding: 0 24px;
+      border: none;
+      border-radius: 13px;
+      background: #fff;
+      font-family: inherit;
+      font-size: 16px;
+      color: var(--text-input);
+      outline: none;
+    }
+
+    .field textarea {
+      height: 45px;
+      padding-top: 13px;
+      padding-bottom: 13px;
+      resize: none;
+      line-height: 16px;
+    }
+
+    .field.address input,
+    .field.address textarea {
+      font-size: 12px;
+      color: var(--text-secondary);
+      letter-spacing: 0.12px;
+    }
+
+    .submit-wrap {
+      padding: 32px 39px 0;
+    }
+
+    .submit-btn {
+      width: 100%;
+      height: 44px;
+      border: none;
+      border-radius: 32px;
+      background: var(--btn-dark);
+      color: #fff;
+      font-family: inherit;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      line-height: 28px;
+    }
+
+    .submit-btn:active { opacity: 0.85; }
+
+    @media (max-width: 480px) {
+      body { padding: 0; }
+      .phone {
+        width: 100vw;
+        height: 100vh;
+        max-height: 100vh;
+        border-radius: 0;
+        box-shadow: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="phone">
+    <header class="header">
+      <button class="back-btn" type="button" id="backBtn" aria-label="返回">
+        <img src="images/fanhui.png" alt="" />
+      </button>
+      <h1 class="page-title">个人信息</h1>
+    </header>
+
+    <div class="content">
+      <div class="avatar-section">
+        <div class="avatar-wrap">
+          <img class="avatar" id="avatarImg" src="images/profile-avatar-mom.png" alt="用户头像" />
+          <button class="avatar-edit" type="button" id="avatarEditBtn" aria-label="更换头像">
+            <img src="images/profile-avatar-edit.svg" alt="" />
+          </button>
+        </div>
+      </div>
+
+      <form class="form" id="profileForm">
+        <div class="field">
+          <label for="nickname">昵称</label>
+          <input id="nickname" name="nickname" type="text" value="妈妈小丽" autocomplete="name" />
+        </div>
+        <div class="field">
+          <label for="phone">电话号码</label>
+          <input id="phone" name="phone" type="tel" value="123 5678 9000" autocomplete="tel" />
+        </div>
+        <div class="field">
+          <label for="idNumber">证件号码</label>
+          <input id="idNumber" name="idNumber" type="text" value="123456 20260409 7890" />
+        </div>
+        <div class="field address">
+          <label for="address">家庭地址</label>
+          <input id="address" name="address" type="text" value="翻斗大街翻斗花园二号楼1001室" />
+        </div>
+      </form>
+
+      <div class="submit-wrap">
+        <button class="submit-btn" type="button" id="submitBtn">完成</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/system-time.js"></script>
+  <script>
+    const DEFAULT_PROFILE = {
+      nickname: "妈妈小丽",
+      phone: "123 5678 9000",
+      idNumber: "123456 20260409 7890",
+      address: "翻斗大街翻斗花园二号楼1001室",
+      avatar: "images/profile-avatar-mom.png"
+    };
+
+    function loadProfile() {
+      const stored = sessionStorage.getItem("userProfile");
+      return stored ? { ...DEFAULT_PROFILE, ...JSON.parse(stored) } : { ...DEFAULT_PROFILE };
+    }
+
+    function saveProfile(data) {
+      sessionStorage.setItem("userProfile", JSON.stringify(data));
+    }
+
+    const profile = loadProfile();
+
+    document.getElementById("nickname").value = profile.nickname;
+    document.getElementById("phone").value = profile.phone;
+    document.getElementById("idNumber").value = profile.idNumber;
+    document.getElementById("address").value = profile.address;
+    document.getElementById("avatarImg").src = profile.avatar;
+
+    document.getElementById("backBtn").addEventListener("click", () => {
+      window.location.href = "我的.html";
+    });
+
+    document.getElementById("avatarEditBtn").addEventListener("click", () => {
+      alert("更换头像");
+    });
+
+    document.getElementById("submitBtn").addEventListener("click", () => {
+      saveProfile({
+        nickname: document.getElementById("nickname").value.trim(),
+        phone: document.getElementById("phone").value.trim(),
+        idNumber: document.getElementById("idNumber").value.trim(),
+        address: document.getElementById("address").value.trim(),
+        avatar: document.getElementById("avatarImg").src
+      });
+      window.location.href = "我的.html";
+    });
+  </script>
+  <script src="js/section-fade-in.js"></script>
+</body>
+</html>

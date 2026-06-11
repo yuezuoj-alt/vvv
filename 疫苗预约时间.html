@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>接种预定时间</title>
+  <script>
+    (function () {
+      var params = new URLSearchParams(window.location.search);
+      params.set("openBooking", "1");
+      window.location.replace("index.html?" + params.toString());
+    })();
+  </script>
+</head>
+<body>
+  <p>正在打开预约时间…</p>
+  <script src="js/section-fade-in.js"></script>
+</body>
+</html>

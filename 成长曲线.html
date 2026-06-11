@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <link rel="stylesheet" href="css/bottom-nav.css" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>成长曲线</title>
+  <style>
+    :root {
+      --bg-page: #f7f2ef;
+      --pink-header-from: #fd898a;
+      --pink-header-to: #fd9999;
+      --pink-accent: #ec7b75;
+      --pink-muted: #e8c0b7;
+      --pink-nav: #fee0d8;
+      --text-dark: #464646;
+      --text-muted: #8a8a8e;
+      --text-sub: #a4aab2;
+      --phone-w: 440px;
+      --phone-h: 894px;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #e8e4e2;
+      font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+      padding: 24px 12px;
+    }
+
+    .phone {
+      width: var(--phone-w);
+      height: var(--phone-h);
+      max-width: 100%;
+      max-height: calc(100vh - 48px);
+      background: var(--bg-page);
+      border-radius: 48px;
+      overflow: hidden;
+      position: relative;
+      box-shadow: 0 24px 80px rgba(0, 0, 0, 0.18);
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ===== 粉色头部：固定 143px，不与下方重叠 ===== */
+    .pink-header {
+      flex-shrink: 0;
+      height: 143px;
+      background: linear-gradient(180deg, var(--pink-header-from) 0%, var(--pink-header-to) 100%);
+      position: relative;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+    }
+    .profile-row {
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 7px 20px 0;
+    }
+
+    .tab-bar-wrap {
+      flex-shrink: 0;
+      position: relative;
+      padding: 39px 20px 0;
+    }
+
+    .tab-bar-bg {
+      position: absolute;
+      left: 20px;
+      right: 20px;
+      top: 39px;
+      height: 40px;
+      border-radius: 10px;
+      background: linear-gradient(180deg, rgba(255, 240, 235, 0.6) 30%, rgba(255, 240, 235, 0.8) 100%);
+      backdrop-filter: blur(32.5px);
+      border: 0.8px solid rgba(255, 255, 255, 0.6);
+    }
+
+    .tab-bar {
+      position: relative;
+      display: flex;
+      height: 40px;
+      align-items: center;
+    }
+
+    .tab-item {
+      flex: 1;
+      border: none;
+      background: none;
+      font-family: inherit;
+      font-size: 16px;
+      color: #000;
+      cursor: pointer;
+      height: 31px;
+      margin: 4.5px 0;
+      border-radius: 7px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .tab-item.active {
+      flex: 0 0 194px;
+      margin-left: 4px;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.75) 0%, rgba(255, 255, 255, 0.9) 100%);
+      box-shadow: 0 0 4px rgba(0, 0, 0, 0.1), inset 0 0.5px 0 rgba(255, 255, 255, 0.75);
+    }
+
+    /* ===== 灰色内容区：紧接粉色块下方，不重叠 ===== */
+    .body-area {
+      flex: 1;
+      background: var(--bg-page);
+      position: relative;
+      padding: 0 23px 102px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .who-label {
+      position: relative;
+      z-index: 2;
+      font-size: 12px;
+      color: var(--text-sub);
+      margin: 16px 0 22px;
+      flex-shrink: 0;
+    }
+
+    .chart-card {
+      position: relative;
+      z-index: 2;
+      background: #fff;
+      border-radius: 20px;
+      height: 525px;
+      flex-shrink: 0;
+      overflow: hidden;
+    }
+
+    /* 图表网格区域 */
+    .chart-plot {
+      position: absolute;
+      left: 37px;
+      top: 24px;
+      width: 324px;
+      height: 444px;
+    }
+
+    /* 图表底纹：0.5px #D6D6D8 细线 */
+    .chart-grid {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 324px;
+      height: 444px;
+      z-index: 3;
+      pointer-events: none;
+    }
+
+    .chart-grid line {
+      stroke: #D6D6D8;
+      stroke-width: 0.5;
+      vector-effect: non-scaling-stroke;
+      shape-rendering: crispEdges;
+    }
+
+    .chart-shade-height,
+    .chart-shade-weight {
+      position: absolute;
+      left: 0;
+      width: 324px;
+      z-index: 1;
+      pointer-events: none;
+      display: block;
+      object-fit: fill;
+    }
+
+    .chart-shade-height {
+      top: 66px;
+      height: 204px;
+    }
+
+    .chart-shade-weight {
+      top: 152px;
+      height: 246px;
+    }
+
+    .chart-data-layer {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 324px;
+      height: 444px;
+      z-index: 4;
+      overflow: visible;
+      pointer-events: none;
+    }
+
+    .chart-plot img {
+      display: block;
+      max-width: none;
+    }
+
+    /* 坐标轴标签 */
+    .chart-axis-y-left,
+    .chart-axis-y-right {
+      position: absolute;
+      top: 24px;
+      height: 444px;
+      font-size: 10px;
+      color: var(--text-muted);
+    }
+
+    .chart-axis-y-left {
+      left: 14px;
+      width: 22px;
+    }
+
+    .chart-axis-y-right {
+      right: 9px;
+      width: 25px;
+    }
+
+    .axis-row {
+      position: absolute;
+      left: 0;
+      right: 0;
+      transform: translateY(-50%);
+      text-align: right;
+    }
+
+    .chart-axis-y-right .axis-row {
+      text-align: left;
+    }
+
+    .chart-axis-x {
+      position: absolute;
+      left: 37px;
+      width: 324px;
+      top: 475px;
+      height: 11px;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .chart-axis-x .month-label {
+      position: absolute;
+      top: 0;
+      transform: translateX(-50%);
+      text-align: center;
+    }
+
+    .chart-axis-x .unit {
+      position: absolute;
+      right: -12px;
+      top: 20px;
+      font-size: 10px;
+      transform: none;
+    }
+
+    /* 图例 */
+    .legend-wrap {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 102px;
+      height: 55px;
+      background: linear-gradient(180deg, transparent 0%, rgba(149, 149, 149, 0.1) 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 48px;
+      z-index: 5;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      color: var(--text-dark);
+    }
+
+    .legend-bar {
+      width: 76px;
+      height: 8px;
+      border-radius: 4.5px;
+    }
+
+    .legend-bar.height { background: #f8e56c; }
+    .legend-bar.weight { background: #9ebdae; }
+
+    .bottom-nav {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 102px;
+      background: var(--pink-nav);
+      backdrop-filter: blur(11.45px);
+      display: flex;
+      justify-content: space-between;
+      padding: 16px 30px 34px;
+      z-index: 10;
+    }
+
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 50px;
+      border: none;
+      background: none;
+      font-family: inherit;
+      cursor: pointer;
+      padding: 0;
+    }
+
+    .nav-item .nav-label {
+      font-size: 10px;
+      color: var(--pink-muted);
+      white-space: nowrap;
+    }
+
+    .nav-item.active .nav-label { color: var(--pink-accent); }
+
+    @media (max-width: 480px) {
+      body { padding: 0; }
+      .phone {
+        width: 100vw;
+        height: 100vh;
+        max-height: 100vh;
+        border-radius: 0;
+        box-shadow: none;
+      }
+    }
+  </style>
+  <script src="js/load-baby-profile-css.js"></script>
+</head>
+<body>
+  <div class="phone">
+    <!-- 粉色头部 143px -->
+    <header class="pink-header">
+      <div class="profile-row" id="profileSwitcher"></div>
+
+      <div class="tab-bar-wrap">
+        <div class="tab-bar-bg" aria-hidden="true"></div>
+        <div class="tab-bar">
+          <button class="tab-item active" type="button" data-tab="curve">曲线</button>
+          <button class="tab-item" type="button" data-tab="record">记录</button>
+        </div>
+      </div>
+    </header>
+
+    <!-- 灰色内容区 -->
+    <main class="body-area">
+      <p class="who-label">WHO 生长标准（儿童，0-24个月）</p>
+
+      <div class="chart-card">
+        <div class="chart-plot" id="growthChartPlot">
+          <!-- WHO 标准色带：按 Figma 曲线形状（Vector 167 / 168） -->
+          <img class="chart-shade-height" src="images/growth-shade-height.svg" alt="" aria-hidden="true" />
+          <img class="chart-shade-weight" src="images/growth-shade-weight.svg" alt="" aria-hidden="true" />
+
+          <!-- 图表底纹：横纵网格 0.5px #D6D6D8 -->
+          <svg class="chart-grid" viewBox="0 0 324 444" aria-hidden="true">
+            <line x1="0" y1="35" x2="324" y2="35" />
+            <line x1="0" y1="83" x2="324" y2="83" />
+            <line x1="0" y1="130" x2="324" y2="130" />
+            <line x1="0" y1="178" x2="324" y2="178" />
+            <line x1="0" y1="225" x2="324" y2="225" />
+            <line x1="0" y1="273" x2="324" y2="273" />
+            <line x1="0" y1="320" x2="324" y2="320" />
+            <line x1="0" y1="368" x2="324" y2="368" />
+            <line x1="0" y1="415" x2="324" y2="415" />
+            <line x1="0" y1="0" x2="0" y2="444" />
+            <line x1="27" y1="0" x2="27" y2="444" />
+            <line x1="54" y1="0" x2="54" y2="444" />
+            <line x1="81" y1="0" x2="81" y2="444" />
+            <line x1="108" y1="0" x2="108" y2="444" />
+            <line x1="135" y1="0" x2="135" y2="444" />
+            <line x1="162" y1="0" x2="162" y2="444" />
+            <line x1="189" y1="0" x2="189" y2="444" />
+            <line x1="216" y1="0" x2="216" y2="444" />
+            <line x1="243" y1="0" x2="243" y2="444" />
+            <line x1="270" y1="0" x2="270" y2="444" />
+            <line x1="297" y1="0" x2="297" y2="444" />
+            <line x1="324" y1="0" x2="324" y2="444" />
+          </svg>
+
+          <!-- 记录数据：黄/绿虚线折线 + 空心圆点（由 growth-curve.js 按记录绘制） -->
+          <svg class="chart-data-layer" id="growthChartData" viewBox="0 0 324 444" aria-hidden="true"></svg>
+        </div>
+
+        <div class="chart-axis-y-left">
+          <span class="axis-row" style="top:18px;">(KG)</span>
+          <span class="axis-row" style="top:41px;">18</span>
+          <span class="axis-row" style="top:83px;">16</span>
+          <span class="axis-row" style="top:130px;">14</span>
+          <span class="axis-row" style="top:178px;">12</span>
+          <span class="axis-row" style="top:225px;">10</span>
+          <span class="axis-row" style="top:273px;">8</span>
+          <span class="axis-row" style="top:320px;">6</span>
+          <span class="axis-row" style="top:368px;">4</span>
+          <span class="axis-row" style="top:415px;">2</span>
+        </div>
+
+        <div class="chart-axis-y-right">
+          <span class="axis-row" style="top:12px;">(CM)</span>
+          <span class="axis-row" style="top:28px;">100</span>
+          <span class="axis-row" style="top:78px;">90</span>
+          <span class="axis-row" style="top:122px;">80</span>
+          <span class="axis-row" style="top:170px;">70</span>
+          <span class="axis-row" style="top:217px;">60</span>
+          <span class="axis-row" style="top:264px;">50</span>
+          <span class="axis-row" style="top:314px;">40</span>
+          <span class="axis-row" style="top:364px;">30</span>
+        </div>
+
+        <div class="chart-axis-x">
+          <span class="month-label" style="left:0.5px;">0</span>
+          <span class="month-label" style="left:25.5px;">1</span>
+          <span class="month-label" style="left:54px;">2</span>
+          <span class="month-label" style="left:81px;">3</span>
+          <span class="month-label" style="left:109px;">4</span>
+          <span class="month-label" style="left:135px;">5</span>
+          <span class="month-label" style="left:162px;">6</span>
+          <span class="month-label" style="left:189.5px;">7</span>
+          <span class="month-label" style="left:216px;">8</span>
+          <span class="month-label" style="left:244.5px;">9</span>
+          <span class="month-label" style="left:270px;">10</span>
+          <span class="month-label" style="left:298px;">11</span>
+          <span class="month-label" style="left:324px;">12</span>
+          <span class="unit">（月龄）</span>
+        </div>
+      </div>
+    </main>
+
+    <div class="legend-wrap">
+      <div class="legend-item">
+        <span class="legend-bar height"></span>
+        <span>身高</span>
+      </div>
+      <div class="legend-item">
+        <span class="legend-bar weight"></span>
+        <span>体重</span>
+      </div>
+    </div>
+
+        <nav class="bottom-nav" aria-label="主导航">
+      <button class="nav-item" data-nav="appointment" type="button"><span class="nav-icon"><img src="" alt="" /></span><span class="nav-label">预约</span></button>
+      <button class="nav-item" data-nav="schedule" type="button"><span class="nav-icon"><img src="" alt="" /></span><span class="nav-label">接种时间表</span></button>
+      <button class="nav-item active" data-nav="growth" type="button"><span class="nav-icon"><img src="" alt="" /></span><span class="nav-label">成长曲线</span></button>
+      <button class="nav-item" data-nav="profile" type="button"><span class="nav-icon"><img src="" alt="" /></span><span class="nav-label">我的</span></button>
+    </nav>
+  </div>
+
+  <script src="js/system-time.js"></script>
+  <script src="js/baby-profile.js"></script>
+  <script src="js/growth-curve.js"></script>
+  <script>
+    const NAV_ROUTES = {
+      appointment: "index.html",
+      schedule: "接种时间表.html",
+      growth: "成长曲线.html",
+      profile: "我的.html"
+    };
+
+    const TAB_ROUTES = {
+      curve: "成长曲线.html",
+      record: "成长记录.html"
+    };
+
+    function initNav() {
+      document.querySelectorAll(".nav-item").forEach((item) => {
+        item.addEventListener("click", () => {
+          const id = item.dataset.nav;
+          if (NAV_ROUTES[id] && id !== "growth") {
+            window.location.href = NAV_ROUTES[id];
+          }
+        });
+      });
+    }
+
+    document.querySelectorAll(".tab-item").forEach((tab) => {
+      tab.addEventListener("click", () => {
+        const id = tab.dataset.tab;
+        if (TAB_ROUTES[id] && id !== "curve") {
+          window.location.href = TAB_ROUTES[id];
+        }
+      });
+    });
+
+    initNav();
+    BabyProfile.mountSwitcher("#profileSwitcher");
+    GrowthCurve.mount("#growthChartData");
+    BabyProfile.subscribe(function (event) {
+      if (event.type === "child" || event.type === "data") {
+        GrowthCurve.mount("#growthChartData");
+      }
+    });
+  </script>
+  <script src="js/bottom-nav.js"></script>
+  <script src="js/section-fade-in.js"></script>
+</body>
+</html>

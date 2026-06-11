@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>疫苗详情</title>
+  <link rel="stylesheet" href="css/vaccine-detail.css" />
+</head>
+<body>
+  <div class="phone">
+    <div class="vax-detail-header">
+      <button class="vax-detail-back" type="button" id="vaxDetailBack" aria-label="返回">
+        <img src="images/fanhui.png" alt="" />
+      </button>
+      <div class="vax-detail-tabs-wrap">
+        <div class="vax-detail-tabs">
+          <button class="vax-detail-tab active" type="button" data-tab="intro">疫苗简介</button>
+          <button class="vax-detail-tab" type="button" data-tab="precautions">注意事项</button>
+        </div>
+      </div>
+    </div>
+    <div class="vax-detail-scroll" id="vaxDetailScroll">
+      <div class="vax-detail-panel active" id="vaxPanelIntro">
+        <p class="vax-detail-intro" id="vaxDetailIntro"></p>
+        <div class="vax-section-label">什么时候接种？</div>
+        <div class="vax-card" id="vaxScheduleCard"></div>
+        <div class="vax-section-label">为什么要接种？</div>
+        <div class="vax-card">
+          <ol class="vax-reason-list" id="vaxReasonList"></ol>
+        </div>
+        <div class="vax-section-label">有哪些副作用？</div>
+        <div class="vax-card vax-side-effects" id="vaxSideEffects"></div>
+      </div>
+      <div class="vax-detail-panel" id="vaxPanelPrecautions">
+        <div class="vax-card vax-precautions" id="vaxPrecautions"></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/system-time.js"></script>
+  <script src="js/vaccine-info.js"></script>
+  <script src="js/vaccine-detail.js"></script>
+  <script>
+    SystemTime.hookStatusBar();
+    VaccineDetail.mount();
+  </script>
+  <script src="js/section-fade-in.js"></script>
+</body>
+</html>

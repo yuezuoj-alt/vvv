@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="refresh" content="0;url=index.html" />
+  <script>
+    (function () {
+      var params = new URLSearchParams(window.location.search);
+      var vaccine = params.get("vaccine") || "";
+      var target = "index.html?openHideConfirm=1";
+      if (vaccine) {
+        target += "&vaccine=" + encodeURIComponent(vaccine);
+      }
+      window.location.replace(target);
+    })();
+  </script>
+  <title>跳转中…</title>
+</head>
+<body>
+  <p>正在跳转到首页…</p>
+  <script src="js/section-fade-in.js"></script>
+</body>
+</html>
