@@ -1,0 +1,62 @@
+/**
+ * 全局状态栏 — 时间与右侧图标组间距 154px
+ */
+.status-bar {
+  display: flex;
+  width: 440px;
+  max-width: 100%;
+  height: 62px;
+  padding: 21px 24px 19px 24px;
+  justify-content: center;
+  align-items: center;
+  gap: 154px;
+  position: relative;
+  flex-shrink: 0;
+  background: transparent;
+  box-sizing: border-box;
+}
+
+.status-bar .time {
+  flex: 0 0 auto;
+  font-size: 17px;
+  font-weight: 590;
+  line-height: 22px;
+  color: #000;
+  text-align: left;
+  transform: translateX(-18px);
+}
+
+.dynamic-island {
+  position: absolute;
+  left: 50%;
+  top: 13px;
+  transform: translateX(-50%);
+  width: 124px;
+  height: 36px;
+  background: #000;
+  border-radius: 50px;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.status-bar .levels {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: translateX(40px);
+}
+
+.status-bar .levels .levels-strip {
+  height: 13px;
+  width: auto;
+  display: block;
+}
+
+.calendar-btn img {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+  display: block;
+  flex-shrink: 0;
+}

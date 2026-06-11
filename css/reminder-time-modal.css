@@ -1,0 +1,229 @@
+/* 提醒时间弹窗 — Figma 1-3780 */
+.reminder-time-flow {
+  position: absolute;
+  inset: 0;
+  z-index: 18;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 265px 20px 0;
+  pointer-events: none;
+}
+
+.reminder-time-flow.is-open {
+  pointer-events: auto;
+}
+
+.reminder-time-flow[hidden] {
+  display: none !important;
+}
+
+.reminder-time-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.reminder-time-stack {
+  position: relative;
+  z-index: 1;
+  width: 400px;
+  max-width: 100%;
+  flex-shrink: 0;
+}
+
+.reminder-time-card {
+  box-sizing: border-box;
+  width: 400px;
+  max-width: 100%;
+  height: 397px;
+  border-radius: 15px;
+  background: #fff;
+  backdrop-filter: blur(12.5px);
+  -webkit-backdrop-filter: blur(12.5px);
+  padding: 45px 20px 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.reminder-time-header {
+  position: relative;
+  height: 31px;
+  margin-bottom: 31px;
+  flex-shrink: 0;
+}
+
+.reminder-time-title {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 400;
+  line-height: 31px;
+  text-align: center;
+  color: #000;
+}
+
+.reminder-time-badge {
+  position: absolute;
+  top: 5px;
+  left: 230px;
+  box-sizing: border-box;
+  width: 68px;
+  height: 21px;
+  border: 0.5px solid #ccc;
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.reminder-time-badge span {
+  font-size: 10px;
+  font-weight: 400;
+  line-height: 20px;
+  letter-spacing: 0.35px;
+  color: #000;
+  white-space: nowrap;
+}
+
+.reminder-time-wheel-wrap {
+  position: relative;
+  height: 168px;
+  flex-shrink: 0;
+  overflow: hidden;
+  touch-action: pan-y;
+}
+
+.reminder-time-picker {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.reminder-time-column {
+  position: absolute;
+  top: 0;
+  height: 100%;
+}
+
+.reminder-time-column--period {
+  left: 44px;
+  width: 86px;
+}
+
+.reminder-time-column--hour {
+  left: 160px;
+  width: 65px;
+}
+
+.reminder-time-column--minute {
+  left: 255px;
+  width: 65px;
+}
+
+.reminder-time-column__frame {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 42px;
+  transform: translateY(-50%);
+  pointer-events: none;
+  z-index: 2;
+}
+
+.reminder-time-column__frame::before,
+.reminder-time-column__frame::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: #ccc;
+}
+
+.reminder-time-column__frame::before { top: 0; }
+.reminder-time-column__frame::after { bottom: 0; }
+
+.reminder-time-wheel-col {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
+  scroll-snap-type: y mandatory;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+.reminder-time-wheel-col::-webkit-scrollbar {
+  display: none;
+}
+
+.reminder-time-wheel-col .wheel-item {
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  scroll-snap-align: center;
+  scroll-snap-stop: always;
+  font-size: 16px;
+  font-weight: 600;
+  color: #ccc;
+  user-select: none;
+}
+
+.reminder-time-wheel-col .wheel-item.active {
+  font-size: 28px;
+  font-weight: 600;
+  color: #464646;
+}
+
+.reminder-time-column__unit {
+  position: absolute;
+  top: 50%;
+  left: calc(100% + 10px);
+  transform: translateY(-50%);
+  font-size: 10px;
+  font-weight: 400;
+  line-height: 20px;
+  letter-spacing: 0.35px;
+  color: #000;
+  pointer-events: none;
+  z-index: 3;
+}
+
+.reminder-time-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 58px;
+  flex-shrink: 0;
+}
+
+.reminder-time-actions button {
+  width: 172px;
+  height: 44px;
+  border: none;
+  border-radius: 32px;
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 28px;
+  cursor: pointer;
+}
+
+.reminder-time-actions button:active {
+  opacity: 0.85;
+}
+
+.reminder-time-btn-cancel {
+  background: #d9d9d9;
+  color: #000;
+}
+
+.reminder-time-btn-confirm {
+  background: #fd898a;
+  color: #fff;
+}

@@ -1,0 +1,356 @@
+/** 成长记录添加弹窗 */
+:root {
+  --pink-indicator: #fd9394;
+}
+
+.growth-add-flow {
+  position: absolute;
+  inset: 0;
+  z-index: 18;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  pointer-events: none;
+}
+
+.growth-add-flow.is-open {
+  pointer-events: auto;
+}
+
+.growth-add-flow[hidden] {
+  display: none !important;
+}
+
+.growth-add-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+}
+
+
+/* ===== 弹窗 ===== */
+.growth-add-modal {
+  position: relative;
+  z-index: 1;
+  width: 400px;
+  max-width: 100%;
+  height: auto;
+  max-height: calc(100% - 40px);
+  background: #fff;
+  border-radius: 15px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  padding: 53px 0 0;
+}
+
+.growth-add-modal .modal-main {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transform: translateY(-20px);
+}
+
+.growth-add-modal .modal-weight-block {
+  flex-shrink: 0;
+}
+
+.growth-add-modal .confirm-btn {
+  position: absolute;
+  top: 13px;
+  right: 16px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #ffcf76;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  font-size: 20px;
+  font-weight: 700;
+  color: #464646;
+  line-height: 1;
+}
+
+.growth-add-modal .confirm-btn:active { opacity: 0.85; }
+
+.growth-add-modal .section-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  flex-shrink: 0;
+  height: 28px;
+}
+
+.growth-add-modal .section-header.date { margin-top: 0; }
+.growth-add-modal .section-header.height { margin-top: 12px; }
+.growth-add-modal .section-header.weight { margin-top: 10px; }
+
+.growth-add-modal .section-title {
+  font-size: 22px;
+  color: #000;
+}
+
+.growth-add-modal .unit-badge {
+  position: relative;
+  min-width: 36px;
+  height: 20px;
+  padding: 0 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.growth-add-modal .unit-badge::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border: 0.5px solid #ccc;
+  border-radius: 3px;
+}
+
+.growth-add-modal .unit-badge span {
+  position: relative;
+  font-size: 10px;
+  letter-spacing: 0.35px;
+  color: #000;
+  white-space: nowrap;
+}
+
+/* 垂直滚轮 — 上下灰色数值可见，无遮罩 */
+.growth-add-modal .wheel-wrap {
+  position: relative;
+  overflow: hidden;
+  touch-action: pan-y;
+}
+
+.growth-add-modal .wheel-col {
+  position: relative;
+  height: 100%;
+  overflow-y: auto;
+  scroll-snap-type: y mandatory;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+.growth-add-modal .wheel-col::-webkit-scrollbar { display: none; }
+
+.growth-add-modal .wheel-item {
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  scroll-snap-align: center;
+  scroll-snap-stop: always;
+  font-size: 16px;
+  font-weight: 600;
+  color: #ccc;
+  user-select: none;
+}
+
+.growth-add-modal .wheel-item.active {
+  font-size: 28px;
+  color: #464646;
+}
+
+.growth-add-modal .growth-add-modal .date-picker-wrap {
+  height: 126px;
+  margin-top: 14px;
+  flex-shrink: 0;
+}
+
+/* 日期选区横线 — 固定不随滚轮滚动 */
+.growth-add-modal .growth-add-modal .date-picker-lines {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+}
+
+.growth-add-modal .growth-add-modal .date-picker-lines .picker-line {
+  position: absolute;
+  height: 1px;
+  background: #ccc;
+}
+
+.growth-add-modal .growth-add-modal .date-picker-lines .picker-line--top { top: calc(50% - 21px); }
+.growth-add-modal .growth-add-modal .date-picker-lines .picker-line--bottom { top: calc(50% + 21px); }
+.growth-add-modal .growth-add-modal .date-picker-lines .picker-line--year { left: 62px; width: 86px; }
+.growth-add-modal .growth-add-modal .date-picker-lines .picker-line--month { left: 178px; width: 65px; }
+.growth-add-modal .growth-add-modal .date-picker-lines .picker-line--day { left: 273px; width: 65px; }
+
+.growth-add-modal .date-picker {
+  display: flex;
+  height: 100%;
+  padding: 0 62px;
+}
+
+.growth-add-modal .date-picker .growth-add-modal .wheel-col { flex: 1; }
+.growth-add-modal .date-picker .growth-add-modal .wheel-col.year { flex: 0 0 86px; }
+
+.growth-add-modal .date-picker .growth-add-modal .wheel-col.month,
+.growth-add-modal .date-picker .growth-add-modal .wheel-col.day {
+  transform: translateX(8px);
+}
+
+/* 身高 */
+.growth-add-modal .height-picker-wrap {
+  height: 210px;
+  margin-top: 12px;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.growth-add-modal .height-picker-inner {
+  display: flex;
+  height: 100%;
+  position: relative;
+}
+
+.growth-add-modal .height-picker-inner .growth-add-modal .wheel-col { flex: 1; }
+
+.growth-add-modal .height-picker-inner .growth-add-modal .wheel-item {
+  height: 77px;
+  font-size: 28px;
+  color: #ccc;
+}
+
+.growth-add-modal .height-picker-inner .growth-add-modal .wheel-item.active {
+  font-size: 28px;
+  color: #464646;
+}
+
+.growth-add-modal .height-indicator-line {
+  position: absolute;
+  right: -64px;
+  top: 105px;
+  width: 147px;
+  height: 4px;
+  transform: translateY(-50%);
+  pointer-events: none;
+  z-index: 3;
+}
+
+.growth-add-modal .height-indicator-line img {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.growth-add-modal .height-ruler {
+  position: absolute;
+  right: -40px;
+  top: -44.5px;
+  width: 123px;
+  height: 312px;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.growth-add-modal .height-ruler img {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* 体重 — 下半圆弧形转盘 */
+.growth-add-modal .weight-section {
+  position: relative;
+  height: 170px;
+  overflow: hidden;
+  touch-action: pan-x;
+  flex-shrink: 0;
+  z-index: 4;
+}
+
+.growth-add-modal .weight-indicator {
+  position: absolute;
+  left: 50%;
+  top: 50px;
+  transform: translateX(-50%);
+  width: 4px;
+  height: 120px;
+  background: var(--pink-indicator);
+  border-radius: 2px 2px 0 0;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.growth-add-modal .weight-dial-viewport {
+  position: absolute;
+  inset: 0;
+  overflow: visible;
+  cursor: grab;
+  z-index: 3;
+}
+
+.growth-add-modal .weight-dial-viewport.dragging { cursor: grabbing; }
+
+.growth-add-modal .weight-dial-ring {
+  position: absolute;
+  left: 50%;
+  bottom: -186px;
+  width: 372px;
+  height: 372px;
+  margin-left: -186px;
+  transform: translateY(32px);
+  transform-origin: 186px 186px;
+  will-change: transform;
+  z-index: 2;
+}
+
+.growth-add-modal .weight-dial-ring.snapping {
+  transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.growth-add-modal .weight-dial-svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.growth-add-modal .weight-dial-svg line {
+  stroke: #ccc;
+  stroke-linecap: round;
+}
+
+.growth-add-modal .weight-dial-svg line.tick-major {
+  stroke-width: 1.5;
+}
+
+.growth-add-modal .weight-dial-svg line.tick-mid {
+  stroke-width: 1;
+}
+
+.growth-add-modal .weight-dial-svg line.tick-minor {
+  stroke-width: 0.5;
+}
+
+.growth-add-modal .weight-dial-svg text.dial-label {
+  font-family: inherit;
+  font-size: 28px;
+  font-weight: 600;
+  fill: #ccc;
+}
+
+.growth-add-modal .weight-dial-svg text.dial-label.active {
+  fill: #464646;
+}
+
+@media (max-width: 480px) {
+  .growth-add-modal {
+width: calc(100% - 40px);
+max-width: 400px;
+max-height: calc(100vh - 100px);
+  }
+}

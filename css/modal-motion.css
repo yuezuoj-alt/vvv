@@ -1,0 +1,128 @@
+/**
+ * 疫苗预约应用 — 统一弹窗动效
+ * 出现 300ms / 消失 220ms / ease-out
+ * 仅遮罩与面板淡入淡出，无页面缩放与滑入
+ */
+:root {
+  --modal-enter-duration: 300ms;
+  --modal-leave-duration: 220ms;
+  --modal-ease: ease-out;
+}
+
+/* ===== 标准弹窗容器 ===== */
+.modal-system {
+  position: absolute;
+  inset: 0;
+  z-index: 18;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  pointer-events: none;
+}
+
+.modal-system.is-open,
+.modal-system.modal-system-leaving {
+  pointer-events: auto;
+}
+
+.modal-system[hidden]:not(.modal-system-leaving) {
+  display: none !important;
+}
+
+.modal-system .modal-backdrop {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  background: rgba(0, 0, 0, 0.3);
+  transition: opacity var(--modal-enter-duration) var(--modal-ease);
+}
+
+.modal-system.is-open .modal-backdrop {
+  opacity: 1;
+}
+
+.modal-system.modal-system-leaving .modal-backdrop {
+  opacity: 0;
+  transition-duration: var(--modal-leave-duration);
+}
+
+.modal-system .modal-panel {
+  position: relative;
+  z-index: 1;
+  opacity: 0;
+  transition: opacity var(--modal-enter-duration) var(--modal-ease);
+}
+
+.modal-system.is-open .modal-panel {
+  opacity: 1;
+}
+
+.modal-system.modal-system-leaving .modal-panel {
+  opacity: 0;
+  transition-duration: var(--modal-leave-duration);
+}
+
+/* 备注弹窗保留设计稿纵向偏移 */
+.modal-system.is-layer-remark .modal-panel {
+  transform: translateY(9px);
+}
+
+/* 兼容原有 flow 布局（提醒日期顶部弹窗等） */
+.reminder-date-flow.modal-system,
+.reminder-time-flow.modal-system {
+  align-items: flex-start;
+  padding-top: 265px;
+}
+
+.is-layer-remark.modal-system {
+  align-items: center;
+  justify-content: center;
+}
+
+/* ===== 页面级分离遮罩 + 面板（成长记录添加） ===== */
+.modal-page-backdrop {
+  opacity: 0;
+  transition: opacity var(--modal-enter-duration) var(--modal-ease);
+}
+
+.modal-page-backdrop.is-open {
+  opacity: 1;
+}
+
+.modal-page-backdrop.modal-system-leaving {
+  opacity: 0;
+  transition-duration: var(--modal-leave-duration);
+}
+
+.modal-page-panel {
+  opacity: 0;
+  transition: opacity var(--modal-enter-duration) var(--modal-ease);
+}
+
+.modal-page-panel.is-open {
+  opacity: 1;
+}
+
+.modal-page-panel.modal-system-leaving {
+  opacity: 0;
+  transition-duration: var(--modal-leave-duration);
+}
+
+/* 居中页面弹窗（成长记录添加等） */
+.modal.modal-page-panel {
+  position: absolute;
+  left: 50%;
+  top: calc(50% - 1px);
+  transform: translate(-50%, -50%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .modal-system .modal-backdrop,
+  .modal-system .modal-panel,
+  .modal-page-backdrop,
+  .modal-page-panel {
+    transition: none !important;
+    opacity: 1 !important;
+  }
+}

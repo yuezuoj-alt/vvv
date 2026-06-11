@@ -1,0 +1,21 @@
+/**
+ * 底部导航 — 图标使用 images/ 内 PNG（42×42）
+ */
+.bottom-nav .nav-item .nav-icon {
+  width: 42px;
+  height: 42px;
+  display: block;
+  margin: 0 auto 4px;
+  flex-shrink: 0;
+  line-height: 0;
+}
+
+.bottom-nav .nav-item .nav-icon img {
+  width: 42px;
+  height: 42px;
+  display: block;
+  object-fit: contain;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-drag: none;
+}
